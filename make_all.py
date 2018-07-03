@@ -21,6 +21,11 @@ if __name__ == '__main__':
     
     # TODO: use a proper parser?!
     path_to_chain = sys.argv[1]
+    
+    # needs to be closed with '/' for glob.glob to work properly!
+    if path_to_chain[-1] != '/':
+        path_to_chain += '/'
+    
     model_name = sys.argv[2]
     
     path_out = path_to_chain
@@ -30,6 +35,10 @@ if __name__ == '__main__':
         os.makedirs(path_plot)
         
     ### CUSTOMIZE ###
+    
+    # specify filetype endings for plots:
+    plot_filetypes = ['.pdf', '.png']
+    
     # define some kwargs here:
     hist_kwargs = {'histtype': 'step',
                    'density': True,
@@ -66,6 +75,6 @@ if __name__ == '__main__':
         print '### Converting chain to human-readable text and FITS. ###'
         post_process_chain_1cosmo(path_to_chain, model_name)
         print '### Creating triangle 2D parameter plot. ###'
-        plot_triangle_1cosmo(path_to_chain, path_plot, fname_suffix=model_name, levels=levels, key_params=key_parameters, hist_kwargs=hist_kwargs, contour_kwargs=contour_kwargs, legend_kwargs=legend_kwargs)
+        plot_triangle_1cosmo(path_to_chain, path_plot, fname_suffix=model_name, levels=levels, key_params=key_parameters, hist_kwargs=hist_kwargs, contour_kwargs=contour_kwargs, legend_kwargs=legend_kwargs, plot_filetypes=plot_filetypes)
         print '### Creating 1D parameter histograms. ###'
-        plot_histogram(path_to_chain, path_plot, hist_kwargs=hist_kwargs)
+        plot_histogram(path_to_chain, path_plot, hist_kwargs=hist_kwargs, plot_filetypes=plot_filetypes)

@@ -11,7 +11,7 @@ import os
 import matplotlib.pyplot as plt
 from plot_parameter_triangles import get_params_of_interest
 
-def plot_histogram(path_in, path_out, key_params=[], hist_kwargs={}):
+def plot_histogram(path_in, path_out, key_params=[], plot_filetypes=['.pdf'], hist_kwargs={}):
     
     weights, points_cosmo, param_names, labels_chain = get_params_of_interest(path_in, key_params=key_params)
     
@@ -46,10 +46,11 @@ def plot_histogram(path_in, path_out, key_params=[], hist_kwargs={}):
         ax[-1, -1].axis('off')
         ax[-1, -2].axis('off')
         #print idx, idx1, idx2
-        
-    fname = os.path.join(path_out, 'histograms_1D.pdf')
-    fig.savefig(fname)
-    print 'Plot saved to: \n', fname
+    
+    for filetype in plot_filetypes:
+        fname = os.path.join(path_out, 'histograms_1D' + filetype)
+        fig.savefig(fname)
+        print 'Plot saved to: \n', fname
     
     return
 

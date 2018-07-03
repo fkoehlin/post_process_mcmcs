@@ -59,12 +59,12 @@ def get_params_of_interest(path_to_chain, key_params=[]):
 
     return weights, points_cosmo.T, param_names, labels_chain
 
-def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}):
+def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}, plot_filetypes=['.pdf']):
 
     if len(key_params) == 0:
-        fname_out = path_out + fname_suffix + '_all_params.pdf'
+        fname_out = path_out + fname_suffix + '_all_params'
     else:
-        fname_out = path_out + fname_suffix + '_key_params.pdf'
+        fname_out = path_out + fname_suffix + '_key_params'
 
     weights, points_cosmo, param_names, labels_TeX = get_params_of_interest(path_in, key_params=key_params)
     #= chain1.values(), chain1.keys()
@@ -82,13 +82,15 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
     
     corner.corner(points_cosmo, weights=weights, labels=labels, smooth=0.5, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=False)
     plt.legend(frameon=False, bbox_transform=plt.gcf().transFigure, **legend_kwargs)
-    plt.savefig(fname_out)
-    print 'Plot saved to: \n', fname_out
+    
+    for filetype in plot_filetypes:
+        plt.savefig(fname_out + filetype)
+        print 'Plot saved to: \n', fname_out + filetype
 
     return
 
 # TODO: modify!
-def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclude_zbin=4, nzbins=5, levels=np.array([0.68, 0.95]), hist_kwargs1={}, hist_kwargs2={}, contour_kwargs1={}, contour_kwargs2={}, legend_kwargs={}):
+def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclude_zbin=4, nzbins=5, levels=np.array([0.68, 0.95]), hist_kwargs1={}, hist_kwargs2={}, contour_kwargs1={}, contour_kwargs2={}, legend_kwargs={}, plot_filetypes=['.pdf']):
 
     labels1 = ''
     labels2 = ''
@@ -103,7 +105,7 @@ def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclu
     labels1 = r'$' + labels1[:-2] + r'$'
     labels2 = r'$' + labels2[:-2] + r'$'
 
-    fname_out = path_out + fname_suffix + '_joint_chain.pdf'
+    fname_out = path_out + fname_suffix + '_joint_chain'
 
     fname1 =  glob.glob(path_in1 + '*.fits')[0]
     weights_chain1, points_cosmo1_chain1, points_cosmo2_chain1 = get_params_of_interest(fname1)
@@ -134,11 +136,13 @@ def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclu
     figure_1 = corner.corner(points_cosmo1_chain1, weights=weights_chain1, labels=labels, smooth=0.5, range=rangePlot_1_vs_2, plot_contours=True, hist_kwargs=hist_kwargs1, levels=levels, plot_datapoints=False, plot_density=False)
     figure_2 = corner.corner(points_cosmo2_chain1, weights=weights_chain1, fig=figure_1, smooth=0.5, range=rangePlot_1_vs_2, plot_contours=True, color='blue', hist_kwargs=hist_kwargs2, levels=levels, plot_datapoints=False, plot_density=False, ls='--')
     plt.legend(fontsize=fontsize_legend, frameon=False, bbox_to_anchor=(leg_x, leg_y), bbox_transform=plt.gcf().transFigure)
-    plt.savefig(fname_out)
-    print 'Plot saved to: \n', fname_out
+    
+    for filetype in plot_filetypes:
+        plt.savefig(fname_out + filetype)
+        print 'Plot saved to: \n', fname_out + filetype
 
     #Look at differences (This accounts for the covariance!)
-    fname_out = path_out + fname_suffix + '_diffs.pdf'
+    fname_out = path_out + fname_suffix + '_diffs'
 
     rangePlotDiff = [(-5, 5), (-0.3, 0.3), (-0.5, 0.5)]
     hist_kwargs_diff1 = dict()
@@ -165,8 +169,10 @@ def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclu
         figure_diff2 = corner.corner(points_diff_chain2, weights=weights_chain2, fig=figure_diff1, labels=labels, smooth=0.5, range = rangePlotDiff, hist_kwargs=hist_kwargs_diff2, plot_contours=True, levels=levels, plot_datapoints=False, plot_density=False, color='blue', contour_kwargs=contour_kwargs)
         plt.legend(fontsize=fontsize_legend, frameon=False, bbox_to_anchor=(leg_x, leg_y), bbox_transform=plt.gcf().transFigure)
     '''
-    plt.savefig(fname_out)
-    print 'Plot saved to: \n', fname_out
+    
+    for filetype in plot_filetypes:
+        plt.savefig(fname_out + filetype)
+        print 'Plot saved to: \n', fname_out + filetype
 
     return
 
