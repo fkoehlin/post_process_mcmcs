@@ -141,4 +141,9 @@ def write_table(path_to_chain):
 if __name__ == '__main__':
 
     path_to_chain = sys.argv[1]
+    
+    # needs to be closed with '/' for glob.glob to work properly!
+    if path_to_chain[-1] != '/':
+        path_to_chain += '/'
+
     write_table(path_to_chain)

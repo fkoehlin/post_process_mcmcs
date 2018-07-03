@@ -194,6 +194,11 @@ def post_process_chain_2cosmos(path_to_chain, model_name):
 if __name__ == '__main__':    
     
     path_to_chain = sys.argv[1]
+    
+    # needs to be closed with '/' for glob.glob to work properly!
+    if path_to_chain[-1] != '/':
+        path_to_chain += '/'
+
     model_name = sys.argv[2]
     chain_is = sys.argv[3]
 

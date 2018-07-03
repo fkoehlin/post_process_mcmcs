@@ -68,6 +68,11 @@ if __name__ == '__main__':
 
     
     path_in = sys.argv[1]
+    
+    # needs to be closed with '/' for glob.glob to work properly!
+    if path_in[-1] != '/':
+        path_in += '/'
+
     path_out = os.path.join(path_in, 'plots/')
     
     if not os.path.isdir(path_out):

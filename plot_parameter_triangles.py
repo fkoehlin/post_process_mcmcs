@@ -198,6 +198,11 @@ if __name__ == '__main__':
     levels = levels[:2]
 
     path_in = sys.argv[1]
+    
+    # needs to be closed with '/' for glob.glob to work properly!
+    if path_in[-1] != '/':
+        path_in += '/'
+
     path_out = os.path.join(path_in, 'plots/')
     
     fname_suffix = sys.argv[2]
