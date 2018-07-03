@@ -13,11 +13,22 @@ import numpy as np
 import astropy.io.fits as fits
 #import scipy.stats.distributions as dist
 
-def post_process_chain_1cosmo(path_to_chain, model_name):
+def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold=0.3):
     
-    fname = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
-    
+    if sampler == 'NS':
+        fname = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
+    elif sampler == 'MH':
+        fname = glob.glob(path_to_chain + '*.txt')[0]
+    else:
+        print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, NS = MultiNest).'
+
     data = np.loadtxt(fname)
+    
+    if sampler == 'MH':
+        len_chain = data.shape[0]
+        idx_gtr_threshold = int(threshold * len_chain)
+        data = data[idx_gtr_threshold:, :]
+    
     S8 = data[:, -1] * np.sqrt(data[:, -2] / 0.3)
     
     data = np.column_stack((data, S8))
@@ -61,12 +72,14 @@ def post_process_chain_1cosmo(path_to_chain, model_name):
     header = header[:-2]
     #print header
     #header =  header.tolist()
-    fname = os.path.join(path_to_chain, model_name + '_chain_NS__accepted_HEADER.txt')
+    fname = os.path.join(path_to_chain, model_name + '__HEADER.txt')
     np.savetxt(fname, data, header=header)
     print 'Data saved to: \n', fname
-    
+    if sampler == 'MH':
+        print 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100)
+     
     # for consistency with getdist:
-    fname = os.path.join(path_to_chain, model_name + '_chain_NS__accepted_HEADER.paramnames')
+    fname = os.path.join(path_to_chain, model_name + '__HEADER.paramnames')
     np.savetxt(fname, new_names, delimiter='\t', fmt='%s')
     
     # write out best-fitting statistics:
@@ -91,16 +104,30 @@ def post_process_chain_1cosmo(path_to_chain, model_name):
     if not os.path.isfile(fname):
         thdulist.writeto(fname)    
         print 'Data saved to: \n', fname
+        if sampler == 'MH':
+            print 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100)
     else:
         print 'FITS file already exists. Proceeding without overwriting it!'
     
 
     return 
 
-def post_process_chain_2cosmos(path_to_chain, model_name):
-                
-    fname = path_to_chain + 'chain_NS__accepted.txt'
+def post_process_chain_2cosmos(path_to_chain, model_name, sampler='NS', threshold=0.3):
+          
+    if sampler == 'NS':
+        fname = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
+    elif sampler == 'MH':
+        fname = glob.glob(path_to_chain + '*.txt')[0]
+    else:
+        print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, NS = MultiNest).'
+    
     data = np.loadtxt(fname)
+    
+    if sampler == 'MH':
+        len_chain = data.shape[0]
+        idx_gtr_threshold = int(threshold * len_chain)
+        data = data[idx_gtr_threshold:, :]
+
     #print data
     #print data[:, -1]
     S8_1 = data[:, -3] * np.sqrt(data[:, -4] / 0.3)
@@ -156,12 +183,14 @@ def post_process_chain_2cosmos(path_to_chain, model_name):
     header = header[:-2]
     #print header
     #header =  header.tolist()
-    fname = os.path.join(path_to_chain, model_name + '_chain_NS__accepted_HEADER.txt')
+    fname = os.path.join(path_to_chain, model_name + '__HEADER.txt')
     np.savetxt(fname, data, header=header)
     print 'Data saved to: \n', fname
-    
+    if sampler == 'MH':
+        print 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100)
+
     # for consistency with getdist:
-    fname = os.path.join(path_to_chain, model_name + '_chain_NS__accepted_HEADER.paramnames')
+    fname = os.path.join(path_to_chain, model_name + '__HEADER.paramnames')
     np.savetxt(fname, new_names, delimiter='\t', fmt='%s')
     
     '''
@@ -186,6 +215,8 @@ def post_process_chain_2cosmos(path_to_chain, model_name):
     if not os.path.isfile(fname):
         thdulist.writeto(fname)    
         print 'Data saved to: \n', fname
+        if sampler == 'MH':
+            print 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100)
     else:
         print 'FITS file already exists. Proceeding without overwriting it!'
         

@@ -11,12 +11,8 @@ import corner
 def get_params_of_interest(path_to_chain, key_params=[]):
 
     #fname = path_to_chain + 'chain_NS__accepted.txt'
-    try:
-        fname_chain = glob.glob(path_to_chain + '*_chain_NS__accepted_HEADER.txt')[0]
-        fname_names = glob.glob(path_to_chain + '*_HEADER.paramnames')[0]
-    except:
-        fname_chain = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
-        fname_names = glob.glob(path_to_chain + '*_.paramnames')[0]
+    fname_chain = glob.glob(path_to_chain + '*_HEADER.txt')[0]
+    fname_names = glob.glob(path_to_chain + '*_HEADER.paramnames')[0]
     
     data = np.loadtxt(fname_chain)
     weights = data[:, 0]

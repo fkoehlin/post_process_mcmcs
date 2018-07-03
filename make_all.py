@@ -31,17 +31,24 @@ if __name__ == '__main__':
     path_out = path_to_chain
     path_plot = os.path.join(path_to_chain, 'plots/')
     
+    # MH = Metropolis-Hastings, NS = MultiNest
+    type_sampler = sys.argv[3]
+    #print type_sampler
+    
     if not os.path.isdir(path_plot):
         os.makedirs(path_plot)
         
     ### CUSTOMIZE ###
+    
+    # if you used Metropolis-Hastings as sampler, the first threshold per cent of the chain will be removed as burn-in:
+    threshold = 0.3
     
     # specify filetype endings for plots:
     plot_filetypes = ['.pdf', '.png']
     
     # define some kwargs here:
     hist_kwargs = {'histtype': 'step',
-                   'density': True,
+                   'normed': True,
                    'color': 'black',
                    #'label': r'$\mathrm{fiducial}$',
                    'ls': '-'
@@ -66,14 +73,14 @@ if __name__ == '__main__':
     
     ### CALLING THE SCRIPTS ###
     print '### Writing out parameter table. ###'
-    write_table(path_to_chain)
+    write_table(path_to_chain, sampler=type_sampler, threshold=threshold)
     
     if chain_is in ['2cosmos', '2cosmo', '2COSMOS', '2COSMO', 'two_cosmos', 'two_cosmo']:
-        post_process_chain_2cosmos(path_to_chain, model_name)
+        post_process_chain_2cosmos(path_to_chain, model_name, sampler=type_sampler, threshold=threshold)
         plot_figures_2cosmos()
     else:
         print '### Converting chain to human-readable text and FITS. ###'
-        post_process_chain_1cosmo(path_to_chain, model_name)
+        post_process_chain_1cosmo(path_to_chain, model_name, sampler=type_sampler, threshold=threshold)
         print '### Creating triangle 2D parameter plot. ###'
         plot_triangle_1cosmo(path_to_chain, path_plot, fname_suffix=model_name, levels=levels, key_params=key_parameters, hist_kwargs=hist_kwargs, contour_kwargs=contour_kwargs, legend_kwargs=legend_kwargs, plot_filetypes=plot_filetypes)
         print '### Creating 1D parameter histograms. ###'
