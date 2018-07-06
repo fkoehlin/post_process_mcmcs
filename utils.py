@@ -8,6 +8,10 @@ Created on Fri Jun 29 16:12:20 2018
 
 import numpy as np
 
+def cm2inch(value):
+    
+    return value / 2.54
+
 # Bayesian way of defining confidence intervals:
 def minimum_credible_intervals(values, central_value, weights, bins=40):
     """

@@ -13,6 +13,7 @@ from write_parameter_table import write_table
 from post_process_chain import post_process_chain_1cosmo, post_process_chain_2cosmos
 from plot_parameter_triangles import plot_triangle_1cosmo, plot_figures_2cosmos
 from plot_1D_histograms import plot_histogram
+from plot_2D_contours import make_2D_contour
 
 if __name__ == '__main__':
     
@@ -64,12 +65,23 @@ if __name__ == '__main__':
     # only use 68% and 95% contours:
     levels = levels[:2]
     
+    # std for Gaussian filtering to smooth contours:
+    # set to None for no smoothing!
+    smooth = 1.
+    
     # define key-parameters used in ...
     # must be consistent with CLASS and MontePython names!
     # if list is empty all parameters in chain will be used in plots!
     key_parameters = []
     #key_parameters = ['Omega_m', 'sigma8', 'S8']
     
+    #
+    #paths_to_chains = [path_to_chain, path_to_planck, path_to_kids450]
+    #labels_ctr = ['KV450', 'Planck', 'KiDS-450']
+    #colors_2D = ['blue', 'grey', 'green']
+    paths_to_chains = [path_to_chain]
+    labels_2Dctrs = ['KV-450']
+    colors_2Dctrs = ['blue']
     
     ### CALLING THE SCRIPTS ###
     print '### Writing out parameter table. ###'
@@ -82,6 +94,11 @@ if __name__ == '__main__':
         print '### Converting chain to human-readable text and FITS. ###'
         post_process_chain_1cosmo(path_to_chain, model_name, sampler=type_sampler, threshold=threshold)
         print '### Creating triangle 2D parameter plot. ###'
-        plot_triangle_1cosmo(path_to_chain, path_plot, fname_suffix=model_name, levels=levels, key_params=key_parameters, hist_kwargs=hist_kwargs, contour_kwargs=contour_kwargs, legend_kwargs=legend_kwargs, plot_filetypes=plot_filetypes)
+        plot_triangle_1cosmo(path_to_chain, path_plot, fname_suffix=model_name, levels=levels, key_params=key_parameters, hist_kwargs=hist_kwargs, contour_kwargs=contour_kwargs, legend_kwargs=legend_kwargs, plot_filetypes=plot_filetypes, smooth=smooth)
         print '### Creating 1D parameter histograms. ###'
         plot_histogram(path_to_chain, path_plot, hist_kwargs=hist_kwargs, plot_filetypes=plot_filetypes)
+        print '### Creating 2D contours: Omega_m vs. sigma8 ###' 
+        make_2D_contour(path_plot, paths_in=paths_to_chains, labels_ctr=labels_2Dctrs, colors=colors_2Dctrs, key_params=['Omega_m', 'sigma8'], fname_suffix=model_name, levels=levels, plot_filetypes=plot_filetypes, smooth=smooth)
+        print '### Creating 2D contours: S8 vs. Omega_m ###' 
+        make_2D_contour(path_plot, paths_in=paths_to_chains, labels_ctr=labels_2Dctrs, colors=colors_2Dctrs, key_params=['Omega_m', 'S8'], fname_suffix=model_name, levels=levels, plot_filetypes=plot_filetypes, smooth=smooth)
+       

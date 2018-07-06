@@ -55,7 +55,7 @@ def get_params_of_interest(path_to_chain, key_params=[]):
 
     return weights, points_cosmo.T, param_names, labels_chain
 
-def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}, plot_filetypes=['.pdf']):
+def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}, plot_filetypes=['.pdf'], smooth=0.5):
 
     if len(key_params) == 0:
         fname_out = path_out + fname_suffix + '_all_params'
@@ -76,7 +76,7 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
         plot_ranges += [(points_cosmo[:, idx].min(), points_cosmo[:, idx].max())]
         labels += [r'$' + labels_TeX[idx] + r'$']
     
-    corner.corner(points_cosmo, weights=weights, labels=labels, smooth=0.5, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=False)
+    corner.corner(points_cosmo, weights=weights, labels=labels, smooth=smooth, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=False)
     plt.legend(frameon=False, bbox_transform=plt.gcf().transFigure, **legend_kwargs)
     
     for filetype in plot_filetypes:
@@ -86,7 +86,7 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
     return
 
 # TODO: modify!
-def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclude_zbin=4, nzbins=5, levels=np.array([0.68, 0.95]), hist_kwargs1={}, hist_kwargs2={}, contour_kwargs1={}, contour_kwargs2={}, legend_kwargs={}, plot_filetypes=['.pdf']):
+def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclude_zbin=4, nzbins=5, levels=np.array([0.68, 0.95]), hist_kwargs1={}, hist_kwargs2={}, contour_kwargs1={}, contour_kwargs2={}, legend_kwargs={}, plot_filetypes=['.pdf'], smooth=0.5):
 
     labels1 = ''
     labels2 = ''
@@ -159,7 +159,7 @@ def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclu
 
     labels = [r'$\Delta A_\mathrm{IA}$',r'$\Delta S_8$', r'$\Delta \Omega_{\rm m}$']
 
-    figure_diff1 = corner.corner(points_diff_chain1, weights=weights_chain1, labels=labels, smooth=0.5, range = rangePlotDiff, truths=[0, 0, 0], hist_kwargs=hist_kwargs_diff1, plot_contours=True, levels=levels, plot_datapoints=False, plot_density=False, color='black')
+    figure_diff1 = corner.corner(points_diff_chain1, weights=weights_chain1, labels=labels, smooth=smooth, range = rangePlotDiff, truths=[0, 0, 0], hist_kwargs=hist_kwargs_diff1, plot_contours=True, levels=levels, plot_datapoints=False, plot_density=False, color='black')
     '''
     if plot_noB:
         figure_diff2 = corner.corner(points_diff_chain2, weights=weights_chain2, fig=figure_diff1, labels=labels, smooth=0.5, range = rangePlotDiff, hist_kwargs=hist_kwargs_diff2, plot_contours=True, levels=levels, plot_datapoints=False, plot_density=False, color='blue', contour_kwargs=contour_kwargs)
