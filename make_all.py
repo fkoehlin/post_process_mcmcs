@@ -75,7 +75,9 @@ if __name__ == '__main__':
     key_parameters = []
     #key_parameters = ['Omega_m', 'sigma8', 'S8']
     
-    #
+    # Options for 2D contour plots:
+    # supply paths to several chains that are all plotted in one contour plot
+    # this assumes that chains at those paths were also post-processed in the same way as here!
     #paths_to_chains = [path_to_chain, path_to_planck, path_to_kids450]
     #labels_ctr = ['KV450', 'Planck', 'KiDS-450']
     #colors_2D = ['blue', 'grey', 'green']
@@ -99,6 +101,6 @@ if __name__ == '__main__':
         plot_histogram(path_to_chain, path_plot, hist_kwargs=hist_kwargs, plot_filetypes=plot_filetypes)
         print '### Creating 2D contours: Omega_m vs. sigma8 ###' 
         make_2D_contour(path_plot, paths_in=paths_to_chains, labels_ctr=labels_2Dctrs, colors=colors_2Dctrs, key_params=['Omega_m', 'sigma8'], fname_suffix=model_name, levels=levels, plot_filetypes=plot_filetypes, smooth=smooth)
-        print '### Creating 2D contours: S8 vs. Omega_m ###' 
+        print '### Creating 2D contours: Omega_m vs. S8 ###' 
         make_2D_contour(path_plot, paths_in=paths_to_chains, labels_ctr=labels_2Dctrs, colors=colors_2Dctrs, key_params=['Omega_m', 'S8'], fname_suffix=model_name, levels=levels, plot_filetypes=plot_filetypes, smooth=smooth)
        
