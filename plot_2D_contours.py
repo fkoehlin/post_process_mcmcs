@@ -39,7 +39,7 @@ def logsigma(omega, alpha, const):
 
     return func
 
-def make_2D_contour(path_out, paths_in=[], labels_ctr=[], colors=[], key_params=['Omega_m', 'sigma8'], fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., plot_filetypes=['.pdf'], smooth=1., nbins=50):
+def make_2D_contour(path_out, paths_in=[], labels_ctr=[], colors=[], key_params=['Omega_m', 'sigma8'], ranges_2D_contour={}, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., plot_filetypes=['.pdf'], smooth=1., nbins=50):
 
     fig = plt.figure(tight_layout=True)
     ax = fig.add_subplot(111)
@@ -65,6 +65,10 @@ def make_2D_contour(path_out, paths_in=[], labels_ctr=[], colors=[], key_params=
 
     ax.set_xlabel(r'$' + labels_TeX[0] + '$') #, fontsize=fontsize_labels)
     ax.set_ylabel(r'$' + labels_TeX[1] + '$') #, fontsize=fontsize_labels)
+
+    if ranges_2D_contour != 0:
+        min_x, max_x = ranges_2D_contour['x']
+        min_y, max_y = ranges_2D_contour['y']
 
     ax.set_xlim([min_x.min(), max_x.max()])
     ax.set_ylim([min_y.min(), max_y.max()])
@@ -104,4 +108,8 @@ if __name__ == '__main__':
     if not os.path.isdir(path_out):
         os.makedirs(path_out)
 
-    make_2D_contour(path_out, paths_in=[path_in], labels_ctr=['test'], colors=['blue'], key_params=['Omega_m', 'sigma8'], fname_suffix=fname_suffix, levels=np.array([68.27, 95.45]) / 100., plot_filetypes=['.pdf'], smooth=1., nbins=50)
+    # supply min/max tuples per axis for single 2D contour plots:
+    # x = Omega_m, y = sigma8
+    ranges_2D_contour = {'x': (0.15, 0.60), 'y': (0.45, 1.05)}
+
+    make_2D_contour(path_out, paths_in=[path_in], ranges_2D_contour=ranges_2D_contour, labels_ctr=['test'], colors=['blue'], key_params=['Omega_m', 'sigma8'], fname_suffix=fname_suffix, levels=np.array([68.27, 95.45]) / 100., plot_filetypes=['.pdf'], smooth=1., nbins=50)

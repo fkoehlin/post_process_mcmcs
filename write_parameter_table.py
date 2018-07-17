@@ -75,22 +75,22 @@ def write_parameters_to_file(fname, best_fit_params, fit_statistics, param_value
     return
 
 def write_table(path_to_chain, sampler='NS', threshold=0.3):
-    
+
     if sampler == 'NS':
         fname = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
     elif sampler == 'MH':
         fname = glob.glob(path_to_chain + '*.txt')[0]
     else:
         print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, NS = MultiNest).'
-        
+
     data = np.loadtxt(fname)
-    
+
     # remove first 30% of entries as burn-in from MH chain:
     if sampler == 'MH':
         len_chain = data.shape[0]
         idx_gtr_threshold = int(threshold * len_chain)
         data = data[idx_gtr_threshold:, :]
-    
+
     weights = data[:, 0]
     #print data
     #print data[:, -1]
@@ -98,10 +98,10 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
     fname =  glob.glob(path_to_chain + '*_.paramnames')[0]
     #print fname
     names = np.loadtxt(fname, dtype=str, delimiter='\t')
-    #print names
-    names = np.loadtxt(fname, dtype=str, delimiter='\t')
-    #print names, names.shape
     new_names = names.tolist() #[:-1, :] = names[:, :]
+
+    #print np.shape(names)
+    #print data.shape
 
     if 'Omega_m ' in names[:, 0] and 'sigma8 ' in names[:, 0]:
         idx_Om = np.where('Omega_m ' == names[:, 0])[0]
@@ -112,23 +112,36 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
         data = np.column_stack((data, S8))
         new_names.append(['S8', 'S_{8}'])
 
-    if 'Omega_m_1 ' in names[:, 0] and 'sigma8_1 ' in names[:, 0]:
-        idx_Om = np.where('Omega_m_1 ' == names[:, 0])[0]
-        idx_s8 = np.where('sigma8_1 ' == names[:, 0])[0]
+    elif 'Omega_m' in names[:, 0] and 'sigma8' in names[:, 0]:
+        idx_Om = np.where('Omega_m' == names[:, 0])[0]
+        idx_s8 = np.where('sigma8' == names[:, 0])[0]
         # +2 because of weights and mloglkl:
         S8 = data[:, idx_s8 + 2] * np.sqrt(data[:, idx_Om + 2] / 0.3)
         #print S8.mean()
         data = np.column_stack((data, S8))
-        new_names.append(['S8_1 ', 'S_{8, \, 1}'])
+        new_names.append(['S8', 'S_{8}'])
 
-    if 'Omega_m_2 ' in names[:, 0] and 'sigma8_2 ' in names[:, 0]:
-        idx_Om = np.where('Omega_m_2 ' == names[:, 0])[0]
-        idx_s8 = np.where('sigma8_2 ' == names[:, 0])[0]
-        # +2 because of weights and mloglkl:
-        S8 = data[:, idx_s8 + 2] * np.sqrt(data[:, idx_Om + 2] / 0.3)
-        #print S8.mean()
-        data = np.column_stack((data, S8))
-        new_names.append(['S8_2 ', 'S_{8, \, 2}'])
+    #exit()
+
+    for idx in xrange(2):
+
+        if 'Omega_m_{:} '.format(idx + 1) in names[:, 0] and 'sigma8_{:} '.format(idx + 1) in names[:, 0]:
+            idx_Om = np.where('Omega_m_{:} '.format(idx + 1) == names[:, 0])[0]
+            idx_s8 = np.where('sigma8_{:} '.format(idx + 1) == names[:, 0])[0]
+            # +2 because of weights and mloglkl:
+            S8 = data[:, idx_s8 + 2] * np.sqrt(data[:, idx_Om + 2] / 0.3)
+            #print S8.mean()
+            data = np.column_stack((data, S8))
+            new_names.append(['S8_{:}'.format(idx + 1), 'S_{{8, \, {:}}}'.format(idx + 1)])
+
+        elif 'Omega_m_{:}'.format(idx + 1) in names[:, 0] and 'sigma8_{:}'.format(idx + 1) in names[:, 0]:
+            idx_Om = np.where('Omega_m_{:}'.format(idx + 1) == names[:, 0])[0]
+            idx_s8 = np.where('sigma8_{:}'.format(idx + 1) == names[:, 0])[0]
+            # +2 because of weights and mloglkl:
+            S8 = data[:, idx_s8 + 2] * np.sqrt(data[:, idx_Om + 2] / 0.3)
+            #print S8.mean()
+            data = np.column_stack((data, S8))
+            new_names.append(['S8_{:}'.format(idx + 1), 'S_{{8, \, {:}}}'.format(idx + 1)])
 
     new_names = np.asarray(new_names, dtype=str)
     labels = new_names[:, 0]
@@ -141,6 +154,9 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
     best_fit_index = np.where(data[:, 1] == data[:, 1].min())
     #print best_fit_index
     best_fit_params = data[best_fit_index]
+    #print data.shape
+    #print best_fit_params, best_fit_params.shape
+    #exit()
     fit_statistics = np.array([min_chi2, 0., 0., int(best_fit_index[0])])
 
     params_mean, conf_mean = get_values_and_intervals(data[:, 2:].T, weights, use_median=False)
@@ -148,13 +164,13 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
 
     fname = os.path.join(path_to_chain, 'parameter_table.txt')
     write_parameters_to_file(fname, best_fit_params[0, 2:], fit_statistics, params_mean, conf_mean, params_median, conf_median, labels, labels_tex)
-    
+
     return
 
 if __name__ == '__main__':
 
     path_to_chain = sys.argv[1]
-    
+
     # needs to be closed with '/' for glob.glob to work properly!
     if path_to_chain[-1] != '/':
         path_to_chain += '/'
