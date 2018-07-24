@@ -36,7 +36,7 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
     chain_dict = dict(zip(names[:, 0], data[:, 2:].T))
     new_names = names.tolist() #[:-1, :] = names[:, :]
     try:
-        S8 = chain_dict['sigma8'] * np.sqrt(chain_dict['Omega_m'] / 0.3)
+        S8 = chain_dict['sigma8 '] * np.sqrt(chain_dict['Omega_m '] / 0.3)
         data = np.column_stack((data, S8))
         new_names.append(['S8', 'S_{8}'])
     except:
@@ -45,10 +45,10 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
     # better TeX:
     new_names[np.where(new_names[:, 0] == 'sigma8 '), 1] = '\sigma_8 '
     # \mathrm doesn't seem to work...
-    new_names[np.where(new_names[:, 0] == 'Omega_m '), 1] = '\Omega_{\rm m} '
-    new_names[np.where(new_names[:, 0] == 'omega_cdm '), 1] = '\omega_{\rm cdm} '
-    new_names[np.where(new_names[:, 0] == 'omega_b '), 1] = '\omega_{\rm b} '
-    new_names[np.where(new_names[:, 0] == 'n_s '), 1] = 'n_{\rm s} '
+    new_names[np.where(new_names[:, 0] == 'Omega_m '), 1] = '\Omega_{m} '
+    new_names[np.where(new_names[:, 0] == 'omega_cdm '), 1] = '\omega_{cdm} '
+    new_names[np.where(new_names[:, 0] == 'omega_b '), 1] = '\omega_{b} '
+    new_names[np.where(new_names[:, 0] == 'n_s '), 1] = 'n_{s} '
     new_names[np.where(new_names[:, 0] == 'ln10^{10}A_s '), 1] = '\ln 10^{10} A_s '
 
     column_names = np.concatenate((np.asarray(['weights', 'mloglkl']), names[:, 0], np.asarray(['S8'])))

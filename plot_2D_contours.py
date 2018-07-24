@@ -69,9 +69,12 @@ def make_2D_contour(path_out, paths_in=[], labels_ctr=[], colors=[], key_params=
     if ranges_2D_contour != 0:
         min_x, max_x = ranges_2D_contour['x']
         min_y, max_y = ranges_2D_contour['y']
+    else:
+        min_x, max_x = min_x.min(), max_x.max()
+        min_y, max_y = min_x.min(), max_y.max()
 
-    ax.set_xlim([min_x.min(), max_x.max()])
-    ax.set_ylim([min_y.min(), max_y.max()])
+    ax.set_xlim([min_x, max_x])
+    ax.set_ylim([min_y, max_y])
 
     ax.tick_params(axis='both', width=1) #labelsize=ticksize, width=1)
     #ax.legend(loc='upper right', scatterpoints=1, numpoints=1, frameon=False) #, fontsize=fontsize_legend)
