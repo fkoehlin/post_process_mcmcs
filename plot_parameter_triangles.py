@@ -89,7 +89,7 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
         idx_S8 = int(np.where(param_names == 'S8')[0])
         plot_ranges[idx_S8] = [0.65, 0.90]
 
-    corner.corner(points_cosmo, weights=weights, labels=labels, smooth=smooth, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=False)
+    corner.corner(points_cosmo, weights=weights, labels=labels, smooth=smooth, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=True)
     plt.legend(frameon=False, bbox_transform=plt.gcf().transFigure, **legend_kwargs)
 
     for filetype in plot_filetypes:
@@ -142,8 +142,8 @@ def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclu
 
     labels = [r'$A_\mathrm{IA}$', r'$S_{8}$', r'$\Omega_{\rm m}$', r'$h$', r'$n_\mathrm{s}$']
 
-    figure_1 = corner.corner(points_cosmo1_chain1, weights=weights_chain1, labels=labels, smooth=0.5, range=rangePlot_1_vs_2, plot_contours=True, hist_kwargs=hist_kwargs1, levels=levels, plot_datapoints=False, plot_density=False)
-    figure_2 = corner.corner(points_cosmo2_chain1, weights=weights_chain1, fig=figure_1, smooth=0.5, range=rangePlot_1_vs_2, plot_contours=True, color='blue', hist_kwargs=hist_kwargs2, levels=levels, plot_datapoints=False, plot_density=False, ls='--')
+    figure_1 = corner.corner(points_cosmo1_chain1, weights=weights_chain1, labels=labels, smooth=0.5, range=rangePlot_1_vs_2, plot_contours=True, hist_kwargs=hist_kwargs1, levels=levels, plot_datapoints=False, plot_density=True)
+    figure_2 = corner.corner(points_cosmo2_chain1, weights=weights_chain1, fig=figure_1, smooth=0.5, range=rangePlot_1_vs_2, plot_contours=True, color='blue', hist_kwargs=hist_kwargs2, levels=levels, plot_datapoints=False, plot_density=True, ls='--')
     plt.legend(fontsize=fontsize_legend, frameon=False, bbox_to_anchor=(leg_x, leg_y), bbox_transform=plt.gcf().transFigure)
 
     for filetype in plot_filetypes:
