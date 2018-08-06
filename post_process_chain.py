@@ -33,23 +33,28 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
     fname =  glob.glob(path_to_chain + '*_.paramnames')[0]
     names = np.loadtxt(fname, dtype=str, delimiter='\t')
 
+    # remove trailing spaces:
+    for idx, name in enumerate(names[:, 0]):
+        if name[-1] == ' ':
+            names[idx, 0] = name[:-1]
+
     chain_dict = dict(zip(names[:, 0], data[:, 2:].T))
     new_names = names.tolist() #[:-1, :] = names[:, :]
     try:
-        S8 = chain_dict['sigma8 '] * np.sqrt(chain_dict['Omega_m '] / 0.3)
+        S8 = chain_dict['sigma8'] * np.sqrt(chain_dict['Omega_m'] / 0.3)
         data = np.column_stack((data, S8))
         new_names.append(['S8', 'S_{8}'])
     except:
         print 'Could not calculate and append S8. \n Are Omega_m and sigma8 in the chain?'
     new_names = np.asarray(new_names, dtype=str)
     # better TeX:
-    new_names[np.where(new_names[:, 0] == 'sigma8 '), 1] = '\sigma_8 '
+    new_names[np.where(new_names[:, 0] == 'sigma8'), 1] = '\sigma_8'
     # \mathrm doesn't seem to work...
-    new_names[np.where(new_names[:, 0] == 'Omega_m '), 1] = '\Omega_{m} '
-    new_names[np.where(new_names[:, 0] == 'omega_cdm '), 1] = '\omega_{cdm} '
-    new_names[np.where(new_names[:, 0] == 'omega_b '), 1] = '\omega_{b} '
-    new_names[np.where(new_names[:, 0] == 'n_s '), 1] = 'n_{s} '
-    new_names[np.where(new_names[:, 0] == 'ln10^{10}A_s '), 1] = '\ln 10^{10} A_s '
+    new_names[np.where(new_names[:, 0] == 'Omega_m'), 1] = '\Omega_{m}'
+    new_names[np.where(new_names[:, 0] == 'omega_cdm'), 1] = '\omega_{cdm}'
+    new_names[np.where(new_names[:, 0] == 'omega_b'), 1] = '\omega_{b}'
+    new_names[np.where(new_names[:, 0] == 'n_s'), 1] = 'n_{s}'
+    new_names[np.where(new_names[:, 0] == 'ln10^{10}A_s'), 1] = '\ln 10^{10} A_s'
 
     column_names = np.concatenate((np.asarray(['weights', 'mloglkl']), names[:, 0], np.asarray(['S8'])))
 
@@ -133,6 +138,11 @@ def post_process_chain_2cosmos(path_to_chain, model_name, sampler='NS', threshol
 
     fname =  glob.glob(path_to_chain + '*_.paramnames')[0]
     names = np.loadtxt(fname, dtype=str, delimiter='\t')
+    # remove trailing spaces:
+    for idx, name in enumerate(names[:, 0]):
+        if name[-1] == ' ':
+            names[idx, 0] = name[:-1]
+
     new_names = names.tolist() #[:-1, :] = names[:, :]
 
     chain_dict = dict(zip(names[:, 0], data[:, 2:].T))

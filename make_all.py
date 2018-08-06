@@ -73,6 +73,7 @@ if __name__ == '__main__':
     # must be consistent with CLASS and MontePython names!
     # if list is empty all parameters in chain will be used in plots!
     key_parameters = []
+    #key_parameters = ['omega_cdm', 'ln10^{10}A_s', 'omega_b', 'n_s', 'h', 'c_min', 'A_IA', 'Omega_m', 'sigma8', 'S8']
     #key_parameters = ['Omega_m', 'sigma8', 'S8']
 
     # Options for 2D contour plots:
@@ -83,6 +84,7 @@ if __name__ == '__main__':
     #colors_2D = ['blue', 'grey', 'green']
     paths_to_chains = [path_to_chain]
     labels_2Dctrs = ['KV-450']
+    #labels_2Dctrs = [model_name]
     colors_2Dctrs = ['blue']
 
     # supply min/max tuples per axis for single 2D contour plots:
