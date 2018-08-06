@@ -19,11 +19,15 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
         fname = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
     elif sampler == 'MH':
         fname = glob.glob(path_to_chain + '*.txt')[0]
+    elif sampler == 'CH':
+        fname = os.path.join(path_to_chain, 'chain_CH__sampling.txt')
     else:
         print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, NS = MultiNest).'
 
     data = np.loadtxt(fname)
 
+    # remove first 30% as burn-in
+    # not necessary for NS and CH(?)!
     if sampler == 'MH':
         len_chain = data.shape[0]
         idx_gtr_threshold = int(threshold * len_chain)
@@ -126,11 +130,15 @@ def post_process_chain_2cosmos(path_to_chain, model_name, sampler='NS', threshol
         fname = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
     elif sampler == 'MH':
         fname = glob.glob(path_to_chain + '*.txt')[0]
+    elif sampler == 'CH':
+        fname = os.path.join(path_to_chain, 'chain_CH__sampling.txt')
     else:
         print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, NS = MultiNest).'
 
     data = np.loadtxt(fname)
 
+    # remove first 30% of samples as burn-in
+    # not necessary for NS and CH(?)!
     if sampler == 'MH':
         len_chain = data.shape[0]
         idx_gtr_threshold = int(threshold * len_chain)

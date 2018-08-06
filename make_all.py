@@ -83,8 +83,8 @@ if __name__ == '__main__':
     #labels_ctr = ['KV450', 'Planck', 'KiDS-450']
     #colors_2D = ['blue', 'grey', 'green']
     paths_to_chains = [path_to_chain]
-    labels_2Dctrs = ['KV-450']
-    #labels_2Dctrs = [model_name]
+    #labels_2Dctrs = ['KV-450']
+    labels_2Dctrs = [model_name]
     colors_2Dctrs = ['blue']
 
     # supply min/max tuples per axis for single 2D contour plots:

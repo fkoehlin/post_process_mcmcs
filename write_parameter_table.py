@@ -80,19 +80,22 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
         fname = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
     elif sampler == 'MH':
         fname = glob.glob(path_to_chain + '*.txt')[0]
+    elif sampler == 'CH':
+        fname = os.path.join(path_to_chain, 'chain_CH__sampling.txt')
     else:
         print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, NS = MultiNest).'
 
     data = np.loadtxt(fname)
 
     # remove first 30% of entries as burn-in from MH chain:
+    # not necessary for NS and CH(?)!
     if sampler == 'MH':
         len_chain = data.shape[0]
         idx_gtr_threshold = int(threshold * len_chain)
         data = data[idx_gtr_threshold:, :]
 
     weights = data[:, 0]
-    #print data
+    #print data.shape
     #print data[:, -1]
     # glob can expand names with *-operator!
     fname =  glob.glob(path_to_chain + '*_.paramnames')[0]
@@ -151,8 +154,9 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
     #column_names = np.concatenate((np.asarray(['weights', 'mloglkl']), names[:, 0], np.asarray(['S8'])))
     chi2 = 2. * data[:, 1]
     min_chi2 = chi2.min()
-    best_fit_index = np.where(data[:, 1] == data[:, 1].min())
+    best_fit_index = np.where(data[:, 1] == data[:, 1].min())[0]
     #print best_fit_index
+    #exit()
     best_fit_params = data[best_fit_index]
     #print data.shape
     #print best_fit_params, best_fit_params.shape
