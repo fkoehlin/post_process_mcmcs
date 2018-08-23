@@ -89,9 +89,9 @@ if __name__ == '__main__':
 
     # supply min/max tuples per axis for single 2D contour plots:
     # x = Omega_m, y = sigma8
-    ranges_2D_contour1 = {'x': (0.15, 0.60), 'y': (0.45, 1.05)}
+    ranges_2D_contour1 = {'x': (0.10, 0.50), 'y': (0.55, 1.30)}
     # x = Omega_m, y = S8
-    ranges_2D_contour2 = {'x': (0.15, 0.60), 'y': (0.65, 0.90)}
+    ranges_2D_contour2 = {'x': (0.10, 0.50), 'y': (0., 1.)}
 
     ### CALLING THE SCRIPTS ###
     print '### Writing out parameter table. ###'
