@@ -85,7 +85,8 @@ if __name__ == '__main__':
     paths_to_chains = [path_to_chain]
     #labels_2Dctrs = ['KV-450']
     labels_2Dctrs = [model_name]
-    colors_2Dctrs = ['blue']
+    colors_2Dctrs = ['skyblue']
+    #colors_2Dctrs = ['skyblue', 'limegreen', 'lightgrey']
 
     # supply min/max tuples per axis for single 2D contour plots:
     # x = Omega_m, y = sigma8
