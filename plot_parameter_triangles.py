@@ -55,7 +55,7 @@ def get_params_of_interest(path_to_chain, key_params=[]):
 
     return weights, points_cosmo.T, np.asarray(param_names), labels_chain
 
-def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}, plot_filetypes=['.pdf'], smooth=0.5):
+def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}, label_kwargs={}, plot_filetypes=['.pdf'], smooth=0.5):
 
     if len(key_params) == 0:
         fname_out = path_out + fname_suffix + '_all_params'
@@ -90,7 +90,8 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
         idx_S8 = int(np.where(param_names == 'S8')[0])
         plot_ranges[idx_S8] = [0.65, 0.90]
     '''
-    corner.corner(points_cosmo, weights=weights, labels=labels, smooth=smooth, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=True)
+
+    corner.corner(points_cosmo, weights=weights, labels=labels, smooth=smooth, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=True, label_kwargs=label_kwargs)
     plt.legend(frameon=False, bbox_transform=plt.gcf().transFigure, **legend_kwargs)
 
     for filetype in plot_filetypes:
@@ -204,6 +205,8 @@ if __name__ == '__main__':
                      'bbox_to_anchor': (0.8, 0.8)
                     }
 
+    label_kwargs = {'fontsize': 24}
+
     levels = np.array([68.27, 95.45, 99.73]) / 100.
     levels = levels[:2]
 
@@ -223,6 +226,6 @@ if __name__ == '__main__':
     #key_params = ['Omega_m', 'sigma8', 'S8']
     key_params = []
 
-    plot_triangle_1cosmo(path_in, path_out, fname_suffix=fname_suffix, levels=levels, key_params=key_params)
+    plot_triangle_1cosmo(path_in, path_out, fname_suffix=fname_suffix, levels=levels, key_params=key_params, label_kwargs=label_kwargs)
 
     plt.show()
