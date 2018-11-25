@@ -55,7 +55,7 @@ def get_params_of_interest(path_to_chain, key_params=[]):
 
     return weights, points_cosmo.T, np.asarray(param_names), labels_chain
 
-def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}, label_kwargs={}, plot_filetypes=['.pdf'], smooth=0.5):
+def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}, label_kwargs={}, plot_filetypes=['.pdf'], smooth=0.5, tick_labelsize=12):
 
     if len(key_params) == 0:
         fname_out = path_out + fname_suffix + '_all_params'
@@ -76,23 +76,29 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
         plot_ranges += [(points_cosmo[:, idx].min(), points_cosmo[:, idx].max())]
         labels += [r'$' + labels_TeX[idx] + r'$']
 
-    '''
+    #'''
     # adjust ranges for Omega_m, sigma8 and S8 manually:
     if 'Omega_m' in param_names:
         idx_Omega_m = int(np.where(param_names == 'Omega_m')[0])
-        plot_ranges[idx_Omega_m] = [0.15, 0.60]
+        plot_ranges[idx_Omega_m] = [0.05, 0.55]
 
     if 'sigma8' in param_names:
         idx_sigma8 = int(np.where(param_names == 'sigma8')[0])
-        plot_ranges[idx_sigma8] = [0.45, 1.05]
+        plot_ranges[idx_sigma8] = [0.4, 1.3]
 
     if 'S8' in param_names:
         idx_S8 = int(np.where(param_names == 'S8')[0])
-        plot_ranges[idx_S8] = [0.65, 0.90]
-    '''
+        plot_ranges[idx_S8] = [0.55, 0.90]
+    #'''
 
-    corner.corner(points_cosmo, weights=weights, labels=labels, smooth=smooth, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=True, label_kwargs=label_kwargs)
+    fig = corner.corner(points_cosmo, weights=weights, labels=labels, smooth=smooth, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=True, label_kwargs=label_kwargs)
     plt.legend(frameon=False, bbox_transform=plt.gcf().transFigure, **legend_kwargs)
+
+    # for control of labelsize of x,y-ticks:
+    for ax in fig.get_axes():
+        #ax.tick_params(axis='both', which='major', labelsize=14)
+        #ax.tick_params(axis='both', which='minor', labelsize=12)
+        ax.tick_params(axis='both', labelsize=tick_labelsize)
 
     for filetype in plot_filetypes:
         plt.savefig(fname_out + filetype)
@@ -205,8 +211,13 @@ if __name__ == '__main__':
                      'bbox_to_anchor': (0.8, 0.8)
                     }
 
+    # set fontsize of labels for all axes:
     label_kwargs = {'fontsize': 24}
 
+    # set fontsize of x,y-ticks:
+    tick_labelsize = 12
+
+    # set confidence levels to plot:
     levels = np.array([68.27, 95.45, 99.73]) / 100.
     levels = levels[:2]
 
@@ -226,6 +237,6 @@ if __name__ == '__main__':
     #key_params = ['Omega_m', 'sigma8', 'S8']
     key_params = []
 
-    plot_triangle_1cosmo(path_in, path_out, fname_suffix=fname_suffix, levels=levels, key_params=key_params, label_kwargs=label_kwargs)
+    plot_triangle_1cosmo(path_in, path_out, fname_suffix=fname_suffix, levels=levels, key_params=key_params, label_kwargs=label_kwargs, tick_labelsize=tick_labelsize)
 
     plt.show()
