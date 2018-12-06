@@ -77,7 +77,51 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
         labels += [r'$' + labels_TeX[idx] + r'$']
 
     #'''
-    # adjust ranges for Omega_m, sigma8 and S8 manually:
+    # adjust prior ranges manually:
+    if 'omega_cdm' in param_names:
+        idx_omega_cdm = int(np.where(param_names == 'omega_cdm')[0])
+        plot_ranges[idx_omega_cdm] = [0.01, 0.99]
+    if 'ln10^{10}A_s' in param_names:
+        idx_lnAs = int(np.where(param_names == 'ln10^{10}A_s')[0])
+        plot_ranges[idx_lnAs] = [1.7, 5.]
+    if 'omega_b' in param_names:
+        idx_omega_b = int(np.where(param_names == 'omega_b')[0])
+        plot_ranges[idx_omega_b] = [0.01875, 0.02625]
+    if 'n_s' in param_names:
+        idx_ns = int(np.where(param_names == 'n_s')[0])
+        plot_ranges[idx_ns] = [0.7, 1.3]
+    if 'h' in param_names:
+        idx_h = int(np.where(param_names == 'h')[0])
+        plot_ranges[idx_h] = [0.64, 0.82]
+    if 'A_IA' in param_names:
+        idx_A_IA = int(np.where(param_names == 'A_IA')[0])
+        plot_ranges[idx_A_IA] = [-6.0, 6.0]
+    if 'c_min' in param_names:
+        idx_c_min = int(np.where(param_names == 'c_min')[0])
+        plot_ranges[idx_c_min] = [2., 3.13]
+    if 'dc' in param_names:
+        idx_dc = int(np.where(param_names == 'dc')[0])
+        plot_ranges[idx_dc] = [-0.0006, 0.0006]
+    if 'Ac' in param_names:
+        idx_Ac = int(np.where(param_names == 'Ac')[0])
+        plot_ranges[idx_Ac] = [0.62, 1.40]
+    if 'D_z1' in param_names:
+        idx_Dz1 = int(np.where(param_names == 'D_z1')[0])
+        plot_ranges[idx_Dz1] = [-0.117, 0.117]
+    if 'D_z2' in param_names:
+        idx_Dz2 = int(np.where(param_names == 'D_z2')[0])
+        plot_ranges[idx_Dz2] = [-0.069, 0.069]
+    if 'D_z3' in param_names:
+        idx_Dz3 = int(np.where(param_names == 'D_z3')[0])
+        plot_ranges[idx_Dz3] = [-0.078, 0.078]
+    if 'D_z4' in param_names:
+        idx_Dz4 = int(np.where(param_names == 'D_z4')[0])
+        plot_ranges[idx_Dz4] = [-0.036, 0.036]
+    if 'D_z5' in param_names:
+        idx_Dz5 = int(np.where(param_names == 'D_z5')[0])
+        plot_ranges[idx_Dz5] = [-0.033, 0.033]
+
+    # adjust ranges manually for derived parameters: Omega_m, sigma8 and S8
     if 'Omega_m' in param_names:
         idx_Omega_m = int(np.where(param_names == 'Omega_m')[0])
         plot_ranges[idx_Omega_m] = [0.05, 0.55]
