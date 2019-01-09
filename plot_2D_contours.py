@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 #import mytriangle as triangle
 #from scipy.ndimage import gaussian_filter
 from corner import hist2d
-from utils import weighted_mean, minimum_credible_intervals
+#from utils import weighted_mean, minimum_credible_intervals
 from plot_parameter_triangles import get_params_of_interest
 
 def sigma(omega, b, alpha):
@@ -66,7 +66,7 @@ def make_2D_contour(path_out, paths_in=[], labels_ctr=[], colors=[], key_params=
     ax.set_xlabel(r'$' + labels_TeX[0] + '$') #, fontsize=fontsize_labels)
     ax.set_ylabel(r'$' + labels_TeX[1] + '$') #, fontsize=fontsize_labels)
 
-    if ranges_2D_contour != 0:
+    if len(ranges_2D_contour) != 0:
         min_x, max_x = ranges_2D_contour['x']
         min_y, max_y = ranges_2D_contour['y']
     else:
