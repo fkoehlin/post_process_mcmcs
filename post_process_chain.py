@@ -252,6 +252,8 @@ if __name__ == '__main__':
 
     model_name = sys.argv[2]
     chain_is = sys.argv[3]
+    
+    sampler = sys.argv[4]
 
     # number of derived parameters included in chain (e.g. Omega_m, sigma8):
     #nderived = sys.argv[3]
@@ -260,6 +262,6 @@ if __name__ == '__main__':
     #ndata = sys.argv[4]
 
     if chain_is in ['2cosmos', '2cosmo', '2COSMOS', '2COSMO', 'two_cosmos', 'two_cosmo']:
-        post_process_chain_2cosmos(path_to_chain, model_name)
+        post_process_chain_2cosmos(path_to_chain, model_name, sampler=sampler)
     else:
-        post_process_chain_1cosmo(path_to_chain, model_name)
+        post_process_chain_1cosmo(path_to_chain, model_name, sampler=sampler)
