@@ -77,23 +77,39 @@ def write_parameters_to_file(fname, best_fit_params, fit_statistics, param_value
 def write_table(path_to_chain, sampler='NS', threshold=0.3):
 
     if sampler == 'NS':
-        fname = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
+        fnames = [os.path.join(path_to_chain, 'chain_NS__accepted.txt')]
     elif sampler == 'MH':
-        fname = glob.glob(path_to_chain + '*.txt')[0]
+        fnames = glob.glob(path_to_chain + '*.txt')
     elif sampler == 'CH':
-        fname = os.path.join(path_to_chain, 'chain_CH__sampling.txt')
+        fnames = [os.path.join(path_to_chain, 'chain_CH__sampling.txt')]
     else:
         print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, NS = MultiNest).'
-
-    data = np.loadtxt(fname)
-
+    
+    # deal with multiple chains from MH run and combine them into one (also taking care of burn-in)
+    counter = 0
+    for fname in fnames:
+        if fname not in glob.glob(path_to_chain + '*HEADER.txt') and fname != os.path.join(path_to_chain, 'parameter_table.txt') and sampler == 'MH':
+            data_tmp = np.loadtxt(fname)
+            len_chain = data_tmp.shape[0]
+            idx_gtr_threshold = int(threshold * len_chain)
+            # remove first 30% of entries as burn-in from MH chain:
+            # not necessary for NS and CH(?)! 
+            data_tmp = data_tmp[idx_gtr_threshold:, :]
+            if counter == 0:
+                data = data_tmp
+            else:
+                data = np.concatenate((data, data_tmp))
+            counter += 1
+    
+    '''
     # remove first 30% of entries as burn-in from MH chain:
     # not necessary for NS and CH(?)!
     if sampler == 'MH':
         len_chain = data.shape[0]
         idx_gtr_threshold = int(threshold * len_chain)
         data = data[idx_gtr_threshold:, :]
-
+    '''
+    
     weights = data[:, 0]
     #print data.shape
     #print data[:, -1]
