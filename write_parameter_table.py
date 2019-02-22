@@ -88,13 +88,14 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
     # deal with multiple chains from MH run and combine them into one (also taking care of burn-in)
     counter = 0
     for fname in fnames:
-        if fname not in glob.glob(path_to_chain + '*HEADER.txt') and fname != os.path.join(path_to_chain, 'parameter_table.txt') and sampler == 'MH':
+        if fname not in glob.glob(path_to_chain + '*HEADER.txt') and fname != os.path.join(path_to_chain, 'parameter_table.txt'):
             data_tmp = np.loadtxt(fname)
             len_chain = data_tmp.shape[0]
             idx_gtr_threshold = int(threshold * len_chain)
             # remove first 30% of entries as burn-in from MH chain:
             # not necessary for NS and CH(?)! 
-            data_tmp = data_tmp[idx_gtr_threshold:, :]
+            if sampler == 'MH':
+                data_tmp = data_tmp[idx_gtr_threshold:, :]
             if counter == 0:
                 data = data_tmp
             else:

@@ -27,13 +27,14 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
     # deal with multiple chains from MH run and combine them into one (also taking care of burn-in)
     counter = 0
     for fname in fnames:
-        if fname not in glob.glob(path_to_chain + '*HEADER.txt') and fname != os.path.join(path_to_chain, 'parameter_table.txt') and sampler == 'MH':
+        if fname not in glob.glob(path_to_chain + '*HEADER.txt') and fname != os.path.join(path_to_chain, 'parameter_table.txt'):
             data_tmp = np.loadtxt(fname)
             len_chain = data_tmp.shape[0]
             idx_gtr_threshold = int(threshold * len_chain)
             # remove first 30% as burn-in
             # not necessary for NS and CH(?)!
-            data_tmp = data_tmp[idx_gtr_threshold:, :]
+            if sampler == 'MH':
+                data_tmp = data_tmp[idx_gtr_threshold:, :]
             if counter == 0:
                 data = data_tmp
             else:
