@@ -76,8 +76,8 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
         plot_ranges += [(points_cosmo[:, idx].min(), points_cosmo[:, idx].max())]
         labels += [r'$' + labels_TeX[idx] + r'$']
 
-    #'''
-    # adjust prior ranges manually:
+    '''
+    # adjust prior ranges manually (for KV450):
     if 'omega_cdm' in param_names:
         idx_omega_cdm = int(np.where(param_names == 'omega_cdm')[0])
         plot_ranges[idx_omega_cdm] = [0.01, 0.99]
@@ -121,6 +121,8 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
         idx_Dz5 = int(np.where(param_names == 'D_z5')[0])
         plot_ranges[idx_Dz5] = [-0.033, 0.033]
 
+    '''
+    #'''
     # adjust ranges manually for derived parameters: Omega_m, sigma8 and S8
     if 'Omega_m' in param_names:
         idx_Omega_m = int(np.where(param_names == 'Omega_m')[0])
@@ -135,7 +137,7 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
         plot_ranges[idx_S8] = [0.55, 0.90]
     #'''
 
-    fig = corner.corner(points_cosmo, weights=weights, labels=labels, smooth=smooth, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=True, label_kwargs=label_kwargs)
+    fig = corner.corner(points_cosmo, weights=weights, labels=labels, smooth=smooth, range=plot_ranges, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=False, fill_contours=True, label_kwargs=label_kwargs)
     plt.legend(frameon=False, bbox_transform=plt.gcf().transFigure, **legend_kwargs)
 
     # for control of labelsize of x,y-ticks:
