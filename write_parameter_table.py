@@ -76,14 +76,16 @@ def write_parameters_to_file(fname, best_fit_params, fit_statistics, param_value
 
 def write_table(path_to_chain, sampler='NS', threshold=0.3):
 
-    if sampler == 'NS':
+    if sampler == 'NS' or sampler == 'MN':
         fnames = [os.path.join(path_to_chain, 'chain_NS__accepted.txt')]
     elif sampler == 'MH':
         fnames = glob.glob(path_to_chain + '*.txt')
     elif sampler == 'CH':
         fnames = [os.path.join(path_to_chain, 'chain_CH__sampling.txt')]
+    elif sampler == 'PC':
+        fnames = [os.path.join(path_to_chain, 'chain_PC__accepted.txt')]
     else:
-        print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, NS = MultiNest).'
+        print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).'
     
     # deal with multiple chains from MH run and combine them into one (also taking care of burn-in)
     counter = 0

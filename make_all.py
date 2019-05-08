@@ -32,7 +32,7 @@ if __name__ == '__main__':
     path_out = path_to_chain
     path_plot = os.path.join(path_to_chain, 'plots/')
 
-    # MH = Metropolis-Hastings, NS = MultiNest
+    # MH = Metropolis-Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord
     type_sampler = sys.argv[3]
     #print type_sampler
 
