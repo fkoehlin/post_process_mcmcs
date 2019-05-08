@@ -144,14 +144,16 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
 
 def post_process_chain_2cosmos(path_to_chain, model_name, sampler='NS', threshold=0.3):
 
-    if sampler == 'NS':
+    if sampler == 'NS' or sampler == 'MN':
         fname = os.path.join(path_to_chain, 'chain_NS__accepted.txt')
     elif sampler == 'MH':
         fname = glob.glob(path_to_chain + '*.txt')[0]
     elif sampler == 'CH':
         fname = os.path.join(path_to_chain, 'chain_CH__sampling.txt')
+    elif sampler == 'PC':
+        fname = os.path.join(path_to_chain, 'chain_PC__accepted.txt')
     else:
-        print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, NS = MultiNest).'
+        print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).'
 
     data = np.loadtxt(fname)
 
