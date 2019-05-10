@@ -11,14 +11,11 @@ import sys
 import numpy as np
 from write_parameter_table import write_table
 from post_process_chain import post_process_chain_1cosmo, post_process_chain_2cosmos
-from plot_parameter_triangles import plot_triangle_1cosmo, plot_figures_2cosmos
+from plot_parameter_triangles import plot_triangle_1cosmo, plot_triangles_2cosmos
 from plot_1D_histograms import plot_histogram
 from plot_2D_contours import make_2D_contour
 
 if __name__ == '__main__':
-
-    # will be made an option soon...
-    chain_is = '1cosmo'
 
     # TODO: use a proper parser?!
     path_to_chain = sys.argv[1]
@@ -35,6 +32,11 @@ if __name__ == '__main__':
     # MH = Metropolis-Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord
     type_sampler = sys.argv[3]
     #print type_sampler
+
+    # if you're dealing with a regular chain, just use any or no symbol
+    # if you're dealing with a 2cosmos chain, use any of the following keywords:
+    # '2c', '2cosmos', '2cosmo', '2COSMOS', '2COSMO', 'two_cosmos', 'two_cosmo'
+    chain_is = sys.argv[4]
 
     if not os.path.isdir(path_plot):
         os.makedirs(path_plot)
@@ -98,9 +100,17 @@ if __name__ == '__main__':
     print '### Writing out parameter table. ###'
     write_table(path_to_chain, sampler=type_sampler, threshold=threshold)
 
-    if chain_is in ['2cosmos', '2cosmo', '2COSMOS', '2COSMO', 'two_cosmos', 'two_cosmo']:
+    if chain_is in ['2c', '2cosmos', '2cosmo', '2COSMOS', '2COSMO', 'two_cosmos', 'two_cosmo']:
+        print '### Converting chain to human-readable text and FITS. ###'
         post_process_chain_2cosmos(path_to_chain, model_name, sampler=type_sampler, threshold=threshold)
-        plot_figures_2cosmos()
+        print '### Creating triangle 2D parameter plot. ###'
+        plot_triangles_2cosmos(path_to_chain, path_plot, fname_suffix=model_name, levels=levels, key_params=key_parameters, hist_kwargs=hist_kwargs, contour_kwargs=contour_kwargs, legend_kwargs=legend_kwargs, plot_filetypes=plot_filetypes, smooth=smooth)
+        print '### Creating 1D parameter histograms. ###'
+        plot_histogram(path_to_chain, path_plot, hist_kwargs=hist_kwargs, plot_filetypes=plot_filetypes)
+        print '### Creating 2D contours: Omega_m vs. sigma8 ###'
+        make_2D_contour(path_plot, paths_in=paths_to_chains, ranges_2D_contour=ranges_2D_contour1, labels_ctr=labels_2Dctrs, colors=colors_2Dctrs, key_params=['Omega_m_1', 'sigma8_1'], fname_suffix=model_name, levels=levels, plot_filetypes=plot_filetypes, smooth=smooth)
+        print '### Creating 2D contours: Omega_m vs. S8 ###'
+        make_2D_contour(path_plot, paths_in=paths_to_chains, ranges_2D_contour=ranges_2D_contour2,labels_ctr=labels_2Dctrs, colors=colors_2Dctrs, key_params=['Omega_m_1', 'S8_1'], fname_suffix=model_name, levels=levels, plot_filetypes=plot_filetypes, smooth=smooth)
     else:
         print '### Converting chain to human-readable text and FITS. ###'
         post_process_chain_1cosmo(path_to_chain, model_name, sampler=type_sampler, threshold=threshold)

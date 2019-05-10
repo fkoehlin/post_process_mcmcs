@@ -25,7 +25,7 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
         fnames = [os.path.join(path_to_chain, 'chain_PC__accepted.txt')]
     else:
         print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).'
-   
+
     # deal with multiple chains from MH run and combine them into one (also taking care of burn-in)
     counter = 0
     for fname in fnames:
@@ -42,8 +42,8 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
             else:
                 data = np.concatenate((data, data_tmp))
             counter += 1
-    
-    '''            
+
+    '''
     # remove first 30% as burn-in
     # not necessary for NS and CH(?)!
     if sampler == 'MH':
@@ -271,17 +271,10 @@ if __name__ == '__main__':
         path_to_chain += '/'
 
     model_name = sys.argv[2]
-    chain_is = sys.argv[3]
-    
-    sampler = sys.argv[4]
+    sampler = sys.argv[3]
+    chain_is = sys.argv[4]
 
-    # number of derived parameters included in chain (e.g. Omega_m, sigma8):
-    #nderived = sys.argv[3]
-
-    # number of independent data points in data-vector:
-    #ndata = sys.argv[4]
-
-    if chain_is in ['2cosmos', '2cosmo', '2COSMOS', '2COSMO', 'two_cosmos', 'two_cosmo']:
+    if chain_is in ['2c', '2cosmos', '2cosmo', '2COSMOS', '2COSMO', 'two_cosmos', 'two_cosmo']:
         post_process_chain_2cosmos(path_to_chain, model_name, sampler=sampler)
     else:
         post_process_chain_1cosmo(path_to_chain, model_name, sampler=sampler)

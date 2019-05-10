@@ -55,6 +55,65 @@ def get_params_of_interest(path_to_chain, key_params=[]):
 
     return weights, points_cosmo.T, np.asarray(param_names), labels_chain
 
+def get_params_of_interest_2cosmos(path_to_chain, key_params=[]):
+
+    #fname = path_to_chain + 'chain_NS__accepted.txt'
+    fname_chain = glob.glob(path_to_chain + '*_HEADER.txt')[0]
+    fname_names = glob.glob(path_to_chain + '*_HEADER.paramnames')[0]
+
+    data = np.loadtxt(fname_chain)
+    weights = data[:, 0]
+    mloglkl = data[:, 1]
+
+    vals = data[:, 2:]
+
+    names_chain = np.loadtxt(fname_names, dtype=str, delimiter='\t')
+    all_labels = names_chain[:, 1]
+    # drop column with LaTeX names and derived parameters
+    param_names_tmp = names_chain[:, 0]
+    # remove spaces in strings:
+    for idx, param in enumerate(param_names_tmp):
+        if param[-1] == ' ':
+            param_names_tmp[idx] = param[:-1]
+
+    chain = dict(zip(param_names_tmp, vals.T))
+    names = dict(zip(param_names_tmp, all_labels))
+
+    if len(key_params) == 0:
+        points_cosmo1 = []
+        points_cosmo2 = []
+        param_names = []
+        labels_chain = []
+        for idx, param in enumerate(param_names_tmp):
+            if param[-2:] == '_1':
+                points_cosmo1 += [chain[param]]
+                # TODO: here's some REGEXP magic needed to remove the cosmo indices from the TeX labels...
+                labels_chain += [all_labels[idx]]
+                param_names += [param[:-2]]
+            else:
+                points_cosmo2 += [chain[param]]
+        points_cosmo1 = np.asarray(points_cosmo1)
+        points_cosmo2 = np.asarray(points_cosmo2)
+
+    else:
+        points_cosmo1 = []
+        points_cosmo2 = []
+        labels_chain = []
+        for param in key_params:
+            points_cosmo1 += [chain[param + '_1']]
+            points_cosmo2 += [chain[param + '_2']]
+            labels_chain += [names[param + '_1'][:-2]]
+        points_cosmo1 = np.asarray(points_cosmo1)
+        points_cosmo2 = np.asarray(points_cosmo2)
+        param_names = key_params
+
+    #print param_names
+    #print labels_chain
+    #print points_cosmo
+    #exit()
+
+    return weights, points_cosmo1.T, points_cosmo2.T, np.asarray(param_names), labels_chain
+
 def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}, label_kwargs={}, plot_filetypes=['.pdf'], smooth=0.5, tick_labelsize=12):
 
     if len(key_params) == 0:
@@ -153,89 +212,74 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
     return
 
 # TODO: modify!
-def plot_figures_2cosmos(path_in1, path_in2, path_out, fname_suffix='bla', exclude_zbin=4, nzbins=5, levels=np.array([0.68, 0.95]), hist_kwargs1={}, hist_kwargs2={}, contour_kwargs1={}, contour_kwargs2={}, legend_kwargs={}, plot_filetypes=['.pdf'], smooth=0.5):
+def plot_triangles_2cosmos(path_in, path_out, fname_suffix='bla', levels=np.array([68.27, 95.45, 99.73]) / 100., key_params=[], hist_kwargs={}, contour_kwargs={}, legend_kwargs={}, label_kwargs={}, plot_filetypes=['.pdf'], smooth=0.5, tick_labelsize=12):
 
-    labels1 = ''
-    labels2 = ''
-    for zbin1 in xrange(nzbins):
-        for zbin2 in xrange(zbin1, nzbins):
+    if len(key_params) == 0:
+        fname_out1 = path_out + fname_suffix + '_all_params'
+        fname_out2 = path_out + fname_suffix + '_all_params_DIFF'
+    else:
+        fname_out1 = path_out + fname_suffix + '_key_params'
+        fname_out2 = path_out + fname_suffix + '_key_params_DIFF'
 
-            if zbin1 == exclude_zbin - 1 or zbin2 == exclude_zbin - 1:
-                labels2 += '{:}{:}, '.format(zbin1 + 1, zbin2 + 1)
-            else:
-                labels1 += '{:}{:}, '.format(zbin1 + 1, zbin2 + 1)
+    weights, points_cosmo1, points_cosmo2, param_names, labels_TeX = get_params_of_interest_2cosmos(path_in, key_params=key_params)
+    points_diff = points_cosmo1 - points_cosmo2
 
-    labels1 = r'$' + labels1[:-2] + r'$'
-    labels2 = r'$' + labels2[:-2] + r'$'
+    # set plot ranges between min/max values in chain:
+    plot_ranges1 = []
+    labels1 = []
+    plot_ranges2 = []
+    labels2 = []
+    for idx in xrange(len(param_names)):
+        plot_ranges1 += [(min(points_cosmo1[:, idx].min(), points_cosmo2[:, idx].min()), max(points_cosmo1[:, idx].max(), points_cosmo2[:, idx].max()))]
+        labels1 += [r'$' + labels_TeX[idx] + r'$']
 
-    fname_out = path_out + fname_suffix + '_joint_chain'
+        plot_ranges2 += [(points_diff[:, idx].min(), points_diff[:, idx].max())]
+        labels2 += [r'$\Delta \ ' + labels_TeX[idx] + r'$']
+    #'''
+    # adjust ranges manually for derived parameters: Omega_m, sigma8 and S8
+    if 'Omega_m' in param_names:
+        idx_Omega_m = int(np.where(param_names == 'Omega_m')[0])
+        plot_ranges1[idx_Omega_m] = [0.05, 0.55]
 
-    fname1 =  glob.glob(path_in1 + '*.fits')[0]
-    weights_chain1, points_cosmo1_chain1, points_cosmo2_chain1 = get_params_of_interest(fname1)
-    points_diff_chain1 = points_cosmo1_chain1[:, 0:3] - points_cosmo2_chain1[:, 0:3]
+    if 'sigma8' in param_names:
+        idx_sigma8 = int(np.where(param_names == 'sigma8')[0])
+        plot_ranges1[idx_sigma8] = [0.4, 1.3]
 
-    '''
-    if plot_noB:
-        fname2 =  glob.glob(path_in2 + '*.fits')[0]
-        weights_chain2, points_cosmo1_chain2, points_cosmo2_chain2 = get_params_of_interest(fname2)
-        points_diff_chain2 = points_cosmo1_chain2[:, 0:3] - points_cosmo2_chain2[:, 0:3]
-    '''
-    # exact prior ranges (except for S8)
-    rangePlot_1_vs_2 = [(-6,6), (0.4, 1.2), (0., 1.), (0.64, 0.82), (0.7, 1.3)]
-    hist_kwargs1 = {}
-    hist_kwargs1['histtype'] = 'step'
-    hist_kwargs1['normed'] = True
-    hist_kwargs1['color'] = 'black'
-    hist_kwargs1['label'] = r'$z_i \times \, z_j = \{$' + labels1 + r'$\}$'
+    if 'S8' in param_names:
+        idx_S8 = int(np.where(param_names == 'S8')[0])
+        plot_ranges1[idx_S8] = [0.55, 0.90]
+    #'''
 
-    hist_kwargs2 = {}
-    hist_kwargs2['histtype'] = 'step'
-    hist_kwargs2['normed'] = True
+    hist_kwargs2 = hist_kwargs.copy()
     hist_kwargs2['color'] = 'blue'
-    hist_kwargs2['label'] = r'$z_i \times \, z_j = \{$' + labels2 + r'$\}$'
+    hist_kwargs2['linestyle'] = '--'
 
-    labels = [r'$A_\mathrm{IA}$', r'$S_{8}$', r'$\Omega_{\rm m}$', r'$h$', r'$n_\mathrm{s}$']
+    fig1 = corner.corner(points_cosmo1, weights=weights, labels=labels1, smooth=smooth, range=plot_ranges1, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=False, fill_contours=True, label_kwargs=label_kwargs)
+    corner.corner(points_cosmo2, weights=weights, fig=fig1, labels=labels1, smooth=smooth, range=plot_ranges1, plot_contours=True, hist_kwargs=hist_kwargs2, levels=levels, plot_datapoints=False, plot_density=False, fill_contours=True, label_kwargs=label_kwargs, color='blue')
+    fig1.legend(frameon=False, bbox_transform=plt.gcf().transFigure, **legend_kwargs)
 
-    figure_1 = corner.corner(points_cosmo1_chain1, weights=weights_chain1, labels=labels, smooth=0.5, range=rangePlot_1_vs_2, plot_contours=True, hist_kwargs=hist_kwargs1, levels=levels, plot_datapoints=False, plot_density=True)
-    figure_2 = corner.corner(points_cosmo2_chain1, weights=weights_chain1, fig=figure_1, smooth=0.5, range=rangePlot_1_vs_2, plot_contours=True, color='blue', hist_kwargs=hist_kwargs2, levels=levels, plot_datapoints=False, plot_density=True, ls='--')
-    plt.legend(fontsize=fontsize_legend, frameon=False, bbox_to_anchor=(leg_x, leg_y), bbox_transform=plt.gcf().transFigure)
-
-    for filetype in plot_filetypes:
-        plt.savefig(fname_out + filetype)
-        print 'Plot saved to: \n', fname_out + filetype
-
-    #Look at differences (This accounts for the covariance!)
-    fname_out = path_out + fname_suffix + '_diffs'
-
-    rangePlotDiff = [(-5, 5), (-0.3, 0.3), (-0.5, 0.5)]
-    hist_kwargs_diff1 = dict()
-    hist_kwargs_diff1['histtype'] = 'step'
-    hist_kwargs_diff1['normed'] = True
-    hist_kwargs_diff1['color'] = 'black'
-    hist_kwargs_diff1['label'] = r'$\mathrm{fiducial \ data}$'
-
-    hist_kwargs_diff2 = dict()
-    hist_kwargs_diff2['histtype'] = 'step'
-    hist_kwargs_diff2['normed'] = True
-    hist_kwargs_diff2['color'] = 'blue'
-    hist_kwargs_diff2['label'] = r'$\mathrm{B-modes \ subtracted}$'
-    hist_kwargs_diff2['linestyle'] = '--'
-
-    contour_kwargs = {}
-    contour_kwargs['linestyles'] = 'dashed'
-
-    labels = [r'$\Delta A_\mathrm{IA}$',r'$\Delta S_8$', r'$\Delta \Omega_{\rm m}$']
-
-    figure_diff1 = corner.corner(points_diff_chain1, weights=weights_chain1, labels=labels, smooth=smooth, range = rangePlotDiff, truths=[0, 0, 0], hist_kwargs=hist_kwargs_diff1, plot_contours=True, levels=levels, plot_datapoints=False, plot_density=False, color='black')
-    '''
-    if plot_noB:
-        figure_diff2 = corner.corner(points_diff_chain2, weights=weights_chain2, fig=figure_diff1, labels=labels, smooth=0.5, range = rangePlotDiff, hist_kwargs=hist_kwargs_diff2, plot_contours=True, levels=levels, plot_datapoints=False, plot_density=False, color='blue', contour_kwargs=contour_kwargs)
-        plt.legend(fontsize=fontsize_legend, frameon=False, bbox_to_anchor=(leg_x, leg_y), bbox_transform=plt.gcf().transFigure)
-    '''
+    # for control of labelsize of x,y-ticks:
+    for ax in fig1.get_axes():
+        #ax.tick_params(axis='both', which='major', labelsize=14)
+        #ax.tick_params(axis='both', which='minor', labelsize=12)
+        ax.tick_params(axis='both', labelsize=tick_labelsize)
 
     for filetype in plot_filetypes:
-        plt.savefig(fname_out + filetype)
-        print 'Plot saved to: \n', fname_out + filetype
+        fig1.savefig(fname_out1 + filetype)
+        print 'Plot saved to: \n', fname_out1 + filetype
+
+    fig2 = corner.corner(points_diff, weights=weights, truths=np.zeros(len(labels1)), labels=labels2, smooth=smooth, range=plot_ranges2, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=False, fill_contours=True, label_kwargs=label_kwargs)
+    fig2.legend(frameon=False, bbox_transform=plt.gcf().transFigure, **legend_kwargs)
+
+        # for control of labelsize of x,y-ticks:
+    for ax in fig2.get_axes():
+        #ax.tick_params(axis='both', which='major', labelsize=14)
+        #ax.tick_params(axis='both', which='minor', labelsize=12)
+        ax.tick_params(axis='both', labelsize=tick_labelsize)
+
+    for filetype in plot_filetypes:
+        fig2.savefig(fname_out2 + filetype)
+        print 'Plot saved to: \n', fname_out2 + filetype
 
     return
 
@@ -277,12 +321,17 @@ if __name__ == '__main__':
 
     fname_suffix = sys.argv[2]
 
+    chain_is = sys.argv[3]
+
     if not os.path.isdir(path_out):
         os.makedirs(path_out)
 
     #key_params = ['Omega_m', 'sigma8', 'S8']
     key_params = []
 
-    plot_triangle_1cosmo(path_in, path_out, fname_suffix=fname_suffix, levels=levels, key_params=key_params, label_kwargs=label_kwargs, tick_labelsize=tick_labelsize)
+    if chain_is in ['2c', '2cosmos', '2cosmo', '2COSMOS', '2COSMO', 'two_cosmos', 'two_cosmo']:
+        plot_triangles_2cosmos(path_in, path_out, fname_suffix=fname_suffix, levels=levels, key_params=key_params, label_kwargs=label_kwargs, tick_labelsize=tick_labelsize)
+    else:
+        plot_triangle_1cosmo(path_in, path_out, fname_suffix=fname_suffix, levels=levels, key_params=key_params, label_kwargs=label_kwargs, tick_labelsize=tick_labelsize)
 
     plt.show()
