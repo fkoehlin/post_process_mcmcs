@@ -4,7 +4,14 @@
 Created on Thu Jul 13 17:16:20 2017
 
 @author: fkoehlin
+
+call signature:
+
+    python post_process_chain.py /path/to/MontePython/chain/ model_name={'arbitrary string'} sampler={'MH', 'MN', 'NS', 'PC', 'CH'} chain_is={'2c', '2cosmo', 'bla'}
+
 """
+
+
 
 import os
 import sys

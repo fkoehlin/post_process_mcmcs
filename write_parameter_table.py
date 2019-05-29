@@ -4,6 +4,10 @@
 Created on Tue Nov 21 11:19:58 2017
 
 @author: fkoehlin
+
+call signature:
+
+    python write_parameter_table /path/to/MontePython/chain sampler={'MH', 'NS', 'MN', 'PC', 'CH'}
 """
 
 import os
@@ -198,4 +202,6 @@ if __name__ == '__main__':
     if path_to_chain[-1] != '/':
         path_to_chain += '/'
 
-    write_table(path_to_chain)
+    sampler = sys.argv[2]
+
+    write_table(path_to_chain, sampler=sampler)
