@@ -1,5 +1,23 @@
-    #!/usr/bin/env python
-# encoding: UTF8
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+.. module:: plot_2D_contours
+    :synopsis: plot 2D posterior contours from a chain
+.. moduleauthor:: Fabian Koehlinger <fabian.koehlinger@ipmu.jp>
+
+Script for plotting adjustable 2D posterior contours (credibility intervals) from
+a MontePython chain (from every sampler type).
+
+Important: You must have translated your run into a default MontePython chain via
+
+    python /path/to/montepython_public/montepython/MontePython.py info /path/to/your/MontePython/chain/{PC, NS, CH}
+
+This script is self-consistent and can be called like this:
+
+    python plot_2D_contours /path/to/your/MontePython/chain/
+
+    various other (mostly plotting-related) options can be set further below!
+"""
 
 import os
 import numpy as np

@@ -1,3 +1,24 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+.. module:: plot_parameter_triangles
+    :synopsis: plot all possible 2D posterior combinations from chain
+.. moduleauthor:: Fabian Koehlinger <fabian.koehlinger@ipmu.jp>
+
+Script for plotting all possible 2D posterior combinations from  a MontePython
+chain (from every sampler type).
+
+Important: You must have translated your run into a default MontePython chain via
+
+    python /path/to/montepython_public/montepython/MontePython.py info /path/to/your/MontePython/chain/{PC, NS, CH}
+
+This script is self-consistent and can be called like this:
+
+    python plot_parameter_triangles.py /path/to/MontePython/chain/ fname_suffix={'arbitrary string'} chain_is={'2c', '2cosmo', '1c', '1cosmo'}
+
+    various other (mostly plotting-related) options can be set further below!
+"""
+
 import os
 import glob
 import numpy as np

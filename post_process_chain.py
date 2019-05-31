@@ -1,17 +1,21 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul 13 17:16:20 2017
+.. module:: post_process_chain
+    :synopsis: turn the default Monte Python chain file into a (commented) text and FITS file
+.. moduleauthor:: Fabian Koehlinger <fabian.koehlinger@ipmu.jp>
 
-@author: fkoehlin
+Script for translating the default Monte Python chain into a commented text and FITS file
+in the base folder of the specified MontePython chain. The translated files will also
+contain the parameter S8 = sigma8 * sqrt{Omega_m / 0.3} if sigma8 and Omega_m are among
+the original parameters of the chain.
 
-call signature:
+Important: You must have translated your run into a default MontePython chain via
 
-    python post_process_chain.py /path/to/MontePython/chain/ model_name={'arbitrary string'} sampler={'MH', 'MN', 'NS', 'PC', 'CH'} chain_is={'2c', '2cosmo', 'bla'}
+This script is self-consistent and can be called like this:
 
+    python post_process_chain.py /path/to/MontePython/chain/ model_name={'arbitrary string'} sampler={'MH', 'MN', 'NS', 'PC', 'CH'} chain_is={'2c', '2cosmo', '1c', '1cosmo'}
 """
-
-
 
 import os
 import sys

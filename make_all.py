@@ -1,9 +1,23 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun 29 16:48:45 2018
+.. module:: make_all
+    :synopsis: main script
+.. moduleauthor:: Fabian Koehlinger <fabian.koehlinger@ipmu.jp>
 
-@author: fkoehlin
+Script for post-processing a MontePython chain (from every sampler type) fully
+automatically and for plotting 1D histograms, 2D contours and 2D parameter
+triangle plots.
+
+Important: You must have translated your run into a default MontePython chain via
+
+    python /path/to/montepython_public/montepython/MontePython.py info /path/to/your/MontePython/chain/{PC, NS, CH}
+
+This is the main script, call it like this:
+
+    python make_all.py /path/to/your/MontePython/chain/ model_name={'arbitrary string'} type_sampler={'MH', 'MN', 'NS', 'PC', 'CH"} chain_is={'2c', '2cosmo', '1c', '1cosmo'}
+
+    various other (mostly plotting-related) options can be set further below!
 """
 
 import os

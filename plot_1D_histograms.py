@@ -1,9 +1,22 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun 29 16:45:45 2018
+.. module:: plot_1D_histograms
+    :synopsis: plot 1D posterior histograms from a chain
+.. moduleauthor:: Fabian Koehlinger <fabian.koehlinger@ipmu.jp>
 
-@author: fkoehlin
+Script for plotting all 1D posterior histograms (credibility intervals) from
+a MontePython chain (from every sampler type).
+
+Important: You must have translated your run into a default MontePython chain via
+
+    python /path/to/montepython_public/montepython/MontePython.py info /path/to/your/MontePython/chain/{PC, NS, CH}
+
+This script is self-consistent and can be called like this:
+
+    python plot_1D_histograms /path/to/your/MontePython/chain/
+
+    various other (mostly plotting-related) options can be set further below!
 """
 
 import os

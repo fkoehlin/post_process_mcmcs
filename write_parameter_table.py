@@ -1,13 +1,23 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Tue Nov 21 11:19:58 2017
+.. module:: write_parameter_table
+    :synopsis: write out a human-readable parameter table file
+.. moduleauthor:: Fabian Koehlinger <fabian.koehlinger@ipmu.jp>
 
-@author: fkoehlin
+Script for writing out a human-readable parameter table file, 'parameter_table.txt', in the base folder
+of the specified MontePython chain. This file contains useful info like posterior means, medians and
+credibility intervals.
 
-call signature:
+Important: You must have translated your run into a default MontePython chain via
+
+    python /path/to/montepython_public/montepython/MontePython.py info /path/to/your/MontePython/chain/{PC, NS, CH}
+
+This script is self-consistent and can be called like this:
 
     python write_parameter_table /path/to/MontePython/chain sampler={'MH', 'NS', 'MN', 'PC', 'CH'}
+
+    various other (mostly plotting-related) options can be set further below!
 """
 
 import os
@@ -90,7 +100,7 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
         fnames = [os.path.join(path_to_chain, 'chain_PC__accepted.txt')]
     else:
         print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).'
-    
+
     # deal with multiple chains from MH run and combine them into one (also taking care of burn-in)
     counter = 0
     for fname in fnames:
@@ -99,7 +109,7 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
             len_chain = data_tmp.shape[0]
             idx_gtr_threshold = int(threshold * len_chain)
             # remove first 30% of entries as burn-in from MH chain:
-            # not necessary for NS and CH(?)! 
+            # not necessary for NS and CH(?)!
             if sampler == 'MH':
                 data_tmp = data_tmp[idx_gtr_threshold:, :]
             if counter == 0:
@@ -107,7 +117,7 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
             else:
                 data = np.concatenate((data, data_tmp))
             counter += 1
-    
+
     '''
     # remove first 30% of entries as burn-in from MH chain:
     # not necessary for NS and CH(?)!
@@ -116,7 +126,7 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
         idx_gtr_threshold = int(threshold * len_chain)
         data = data[idx_gtr_threshold:, :]
     '''
-    
+
     weights = data[:, 0]
     #print data.shape
     #print data[:, -1]
