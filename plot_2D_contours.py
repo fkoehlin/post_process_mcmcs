@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 .. module:: plot_2D_contours
-    :synopsis: plot 2D posterior contours from a chain
+    :synopsis: plot 2D posterior contours from an MCMC
 .. moduleauthor:: Fabian Koehlinger <fabian.koehlinger@ipmu.jp>
 
 Script for plotting adjustable 2D posterior contours (credibility intervals) from

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 .. module:: plot_parameter_triangles
-    :synopsis: plot all possible 2D posterior combinations from chain
+    :synopsis: plot all possible 2D posterior combinations from an MCMC
 .. moduleauthor:: Fabian Koehlinger <fabian.koehlinger@ipmu.jp>
 
 Script for plotting all possible 2D posterior combinations from  a MontePython

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 .. module:: plot_1D_histograms
-    :synopsis: plot 1D posterior histograms from a chain
+    :synopsis: plot 1D posterior histograms from an MCMC
 .. moduleauthor:: Fabian Koehlinger <fabian.koehlinger@ipmu.jp>
 
 Script for plotting all 1D posterior histograms (credibility intervals) from
