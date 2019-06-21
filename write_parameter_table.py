@@ -15,7 +15,7 @@ Important: You must have translated your run into a default MontePython chain vi
 
 This script is self-consistent and can be called like this:
 
-    python write_parameter_table /path/to/MontePython/chain sampler={'MH', 'NS', 'MN', 'PC', 'CH'}
+    python write_parameter_table /path/to/MontePython/chain model_name={'arbitrary string'} sampler={'MH', 'NS', 'MN', 'PC', 'CH'}
 
     various other (mostly plotting-related) options can be set further below!
 """
@@ -45,6 +45,30 @@ def get_values_and_intervals(parameters, weights, use_median=False):
         confidence_values[idx, :] = central_value + bounds.flatten()
 
     return param_values, confidence_values
+
+
+def write_best_fit_to_file(fname, best_fit_params, fit_statistics, labels):
+
+    with open(fname, 'w') as f:
+        f.write('# minimal \chi^2 = {:}, index in chain = {:.0f} \n'.format(fit_statistics[0], fit_statistics[3]))
+        for index, label in enumerate(labels):
+            if label[-1] == ' ':
+                name = label[:-1] + ', \t'
+            else:
+                name = label +', \t'
+            if index == len(labels) - 1:
+                name = label
+            if index == 0:
+                f.write('# ' + name)
+            else:
+                f.write(name)
+        f.write('\n')
+        for index, label in enumerate(labels):
+            f.write('\t {:}'.format(best_fit_params[index]))
+
+    print 'File saved to: \n', fname
+
+    return
 
 
 def write_parameters_to_file(fname, best_fit_params, fit_statistics, param_values_mean, confidence_values_mean, param_values_median, confidence_values_median, labels, labels_tex):
@@ -88,7 +112,7 @@ def write_parameters_to_file(fname, best_fit_params, fit_statistics, param_value
 
     return
 
-def write_table(path_to_chain, sampler='NS', threshold=0.3):
+def write_table(path_to_chain, model_name='bla', sampler='NS', threshold=0.3):
 
     if sampler == 'NS' or sampler == 'MN':
         fnames = [os.path.join(path_to_chain, 'chain_NS__accepted.txt')]
@@ -139,6 +163,7 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
     #print np.shape(names)
     #print data.shape
 
+    added_params = 0
     if 'Omega_m ' in names[:, 0] and 'sigma8 ' in names[:, 0]:
         idx_Om = np.where('Omega_m ' == names[:, 0])[0]
         idx_s8 = np.where('sigma8 ' == names[:, 0])[0]
@@ -147,6 +172,8 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
         #print S8.mean()
         data = np.column_stack((data, S8))
         new_names.append(['S8', 'S_{8}'])
+
+        added_params += 1
 
     elif 'Omega_m' in names[:, 0] and 'sigma8' in names[:, 0]:
         idx_Om = np.where('Omega_m' == names[:, 0])[0]
@@ -157,6 +184,7 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
         data = np.column_stack((data, S8))
         new_names.append(['S8', 'S_{8}'])
 
+        added_params += 1
     #exit()
 
     for idx in xrange(2):
@@ -170,6 +198,8 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
             data = np.column_stack((data, S8))
             new_names.append(['S8_{:}'.format(idx + 1), 'S_{{8, \, {:}}}'.format(idx + 1)])
 
+            added_params += 1
+
         elif 'Omega_m_{:}'.format(idx + 1) in names[:, 0] and 'sigma8_{:}'.format(idx + 1) in names[:, 0]:
             idx_Om = np.where('Omega_m_{:}'.format(idx + 1) == names[:, 0])[0]
             idx_s8 = np.where('sigma8_{:}'.format(idx + 1) == names[:, 0])[0]
@@ -178,6 +208,8 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
             #print S8.mean()
             data = np.column_stack((data, S8))
             new_names.append(['S8_{:}'.format(idx + 1), 'S_{{8, \, {:}}}'.format(idx + 1)])
+
+            added_params += 1
 
     new_names = np.asarray(new_names, dtype=str)
     labels = new_names[:, 0]
@@ -202,16 +234,22 @@ def write_table(path_to_chain, sampler='NS', threshold=0.3):
     fname = os.path.join(path_to_chain, 'parameter_table.txt')
     write_parameters_to_file(fname, best_fit_params[0, 2:], fit_statistics, params_mean, conf_mean, params_median, conf_median, labels, labels_tex)
 
+    fname = os.path.join(path_to_chain, model_name + '.bestfit')
+    # remove S8 again so that this bestfit file can be used as MP's bestfit-file!!!
+    write_best_fit_to_file(fname, best_fit_params[0, 2:best_fit_params.size - added_params], fit_statistics, labels[:len(labels) - added_params])
+
     return
 
 if __name__ == '__main__':
 
     path_to_chain = sys.argv[1]
 
+    model_name = sys.argv[2]
+
     # needs to be closed with '/' for glob.glob to work properly!
     if path_to_chain[-1] != '/':
         path_to_chain += '/'
 
-    sampler = sys.argv[2]
+    sampler = sys.argv[3]
 
-    write_table(path_to_chain, sampler=sampler)
+    write_table(path_to_chain, model_name=model_name, sampler=sampler)

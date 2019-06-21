@@ -112,7 +112,7 @@ if __name__ == '__main__':
 
     ### CALLING THE SCRIPTS ###
     print '### Writing out parameter table. ###'
-    write_table(path_to_chain, sampler=type_sampler, threshold=threshold)
+    write_table(path_to_chain, model_name=model_name, sampler=type_sampler, threshold=threshold)
 
     if chain_is in ['2c', '2cosmos', '2cosmo', '2COSMOS', '2COSMO', 'two_cosmos', 'two_cosmo']:
         print '### Converting chain to human-readable text and FITS. ###'
