@@ -9,11 +9,11 @@ Created on Fri Jun 29 16:12:20 2018
 import numpy as np
 
 def cm2inch(value):
-    
+
     return value / 2.54
 
 # Bayesian way of defining confidence intervals:
-def minimum_credible_intervals(values, central_value, weights, bins=40):
+def minimum_credible_intervals(values, central_value, weights, bins=20):
     """
     Extract minimum credible intervals (method from Jan Haman) FIXME
 
@@ -25,7 +25,7 @@ def minimum_credible_intervals(values, central_value, weights, bins=40):
     #bincenters = info.bincenters
     #levels = info.levels
 
-    histogram, bin_edges = np.histogram(values, bins=bins, weights=weights, normed=False)
+    histogram, bin_edges = np.histogram(values, bins=bins, weights=weights, normed=False, density=False)
     bincenters = 0.5*(bin_edges[1:]+bin_edges[:-1])
 
     # Defining the sigma contours (1, 2 and 3-sigma)
@@ -34,8 +34,8 @@ def minimum_credible_intervals(values, central_value, weights, bins=40):
     bounds = np.zeros((len(levels), 2))
     j = 0
     delta = bincenters[1]-bincenters[0]
-    left_edge = np.max(int(histogram[0] - 0.5*(histogram[1]-histogram[0])), 0)
-    right_edge = np.max(int(histogram[-1] + 0.5*(histogram[-1]-histogram[-2])), 0)
+    left_edge = max(histogram[0] - 0.5*(histogram[1]-histogram[0]), 0.)
+    right_edge = max(histogram[-1] + 0.5*(histogram[-1]-histogram[-2]), 0.)
     failed = False
     for level in levels:
         norm = float(
@@ -56,7 +56,8 @@ def minimum_credible_intervals(values, central_value, weights, bins=40):
             # check for multimodal posteriors
             '''
             if ((indices[-1]-indices[0]+1) != len(indices)):
-                print('Could not derive minimum credible intervals for this multimodal posterior!')
+                print'Could not derive minimum credible intervals for this multimodal posterior!' + \
+                     'Please try running longer chains or reducing the number of bins (default: 40)'
                 failed = True
                 break
             '''
@@ -97,10 +98,13 @@ def minimum_credible_intervals(values, central_value, weights, bins=40):
             iterations += 1
             if (iterations > 1e4):
                 print('The loop to check for sigma deviations was taking too long to converge.')
+                failed = True
                 break
 
         # min
-        if indices[0] > 0:
+        if failed:
+            bounds[j][0] = np.nan
+        elif indices[0] > 0:
             bounds[j][0] = bincenters[indices[0]] - delta*(histogram[indices[0]]-water_level)/(histogram[indices[0]]-histogram[indices[0]-1])
         else:
             if (left_edge > water_level):
@@ -109,7 +113,9 @@ def minimum_credible_intervals(values, central_value, weights, bins=40):
                 bounds[j][0] = bincenters[indices[0]] - 0.5*delta*(histogram[indices[0]]-water_level)/(histogram[indices[0]]-left_edge)
 
         # max
-        if indices[-1] < (len(histogram)-1):
+        if failed:
+            bounds[j][1] = np.nan
+        elif indices[-1] < (len(histogram)-1):
             bounds[j][1] = bincenters[indices[-1]] + delta*(histogram[indices[-1]]-water_level)/(histogram[indices[-1]]-histogram[indices[-1]+1])
         else:
             if (right_edge > water_level):

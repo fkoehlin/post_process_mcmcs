@@ -26,12 +26,14 @@ import glob
 import numpy as np
 from utils import minimum_credible_intervals, weighted_mean, quantile
 
-def get_values_and_intervals(parameters, weights, use_median=False):
+def get_values_and_intervals(parameters, weights, labels, use_median=False):
 
     param_values = np.zeros((len(parameters), 7))
     confidence_values = np.zeros((len(parameters), 6))
 
     for idx, param in enumerate(parameters):
+
+        print '-> Calculating histogram for {:}.'.format(labels[idx])
 
         if use_median:
             central_value = quantile(param, [0.5], weights=weights)[0]
@@ -46,30 +48,27 @@ def get_values_and_intervals(parameters, weights, use_median=False):
 
     return param_values, confidence_values
 
-
 def write_best_fit_to_file(fname, best_fit_params, fit_statistics, labels):
-
-    with open(fname, 'w') as f:
-        f.write('# minimal \chi^2 = {:}, index in chain = {:.0f} \n'.format(fit_statistics[0], fit_statistics[3]))
-        for index, label in enumerate(labels):
-            if label[-1] == ' ':
-                name = label[:-1] + ', \t'
+    """
+    Store the bestfit parameters to a file
+    """
+    with open(fname, 'w') as bestfit_file:
+        bestfit_file.write('# minimal \chi^2 = {:}, index in chain = {:.0f} \n'.format(fit_statistics[0], fit_statistics[3]))
+        bestfit_file.write(
+            '# %s\n' % ', '.join(['%16s' % label for label in labels]))
+        # Removing scale factors in order to store true parameter values
+        for idx in xrange(len(labels)):
+            #bfvalue = chain[a[0], 2+i]*info.scales[i, i]
+            bf_value = best_fit_params[idx]
+            if bf_value > 0:
+                bestfit_file.write(' %.6e\t' % bf_value)
             else:
-                name = label +', \t'
-            if index == len(labels) - 1:
-                name = label
-            if index == 0:
-                f.write('# ' + name)
-            else:
-                f.write(name)
-        f.write('\n')
-        for index, label in enumerate(labels):
-            f.write('\t {:}'.format(best_fit_params[index]))
+                bestfit_file.write('%.6e\t' % bf_value)
+        bestfit_file.write('\n')
 
     print 'File saved to: \n', fname
 
     return
-
 
 def write_parameters_to_file(fname, best_fit_params, fit_statistics, param_values_mean, confidence_values_mean, param_values_median, confidence_values_median, labels, labels_tex):
 
@@ -214,6 +213,10 @@ def write_table(path_to_chain, model_name='bla', sampler='NS', threshold=0.3):
     new_names = np.asarray(new_names, dtype=str)
     labels = new_names[:, 0]
     labels_tex = new_names[:, 1]
+
+    for idx, label in enumerate(labels):
+        if label[-1] == ' ':
+            labels[idx] = label[:-1]
     #print new_names, new_names.shape
 
     #column_names = np.concatenate((np.asarray(['weights', 'mloglkl']), names[:, 0], np.asarray(['S8'])))
@@ -227,9 +230,10 @@ def write_table(path_to_chain, model_name='bla', sampler='NS', threshold=0.3):
     #print best_fit_params, best_fit_params.shape
     #exit()
     fit_statistics = np.array([min_chi2, 0., 0., int(best_fit_index[0])])
-
-    params_mean, conf_mean = get_values_and_intervals(data[:, 2:].T, weights, use_median=False)
-    params_median, conf_median = get_values_and_intervals(data[:, 2:].T, weights, use_median=True)
+    print 'Calculating histograms with central value = MEAN.'
+    params_mean, conf_mean = get_values_and_intervals(data[:, 2:].T, weights, labels, use_median=False)
+    print 'Calculating histograms with central value = MEDIAN.'
+    params_median, conf_median = get_values_and_intervals(data[:, 2:].T, weights, labels, use_median=True)
 
     fname = os.path.join(path_to_chain, 'parameter_table.txt')
     write_parameters_to_file(fname, best_fit_params[0, 2:], fit_statistics, params_mean, conf_mean, params_median, conf_median, labels, labels_tex)
