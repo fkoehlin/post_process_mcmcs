@@ -33,7 +33,7 @@ def get_values_and_intervals(parameters, weights, labels, use_median=False):
 
     for idx, param in enumerate(parameters):
 
-        print '-> Calculating histogram for {:}.'.format(labels[idx])
+        print( '-> Calculating histogram for {:}.'.format(labels[idx]))
 
         if use_median:
             central_value = quantile(param, [0.5], weights=weights)[0]
@@ -57,7 +57,7 @@ def write_best_fit_to_file(fname, best_fit_params, fit_statistics, labels):
         bestfit_file.write(
             '# %s\n' % ', '.join(['%16s' % label for label in labels]))
         # Removing scale factors in order to store true parameter values
-        for idx in xrange(len(labels)):
+        for idx in range(len(labels)):
             #bfvalue = chain[a[0], 2+i]*info.scales[i, i]
             bf_value = best_fit_params[idx]
             if bf_value > 0:
@@ -66,7 +66,7 @@ def write_best_fit_to_file(fname, best_fit_params, fit_statistics, labels):
                 bestfit_file.write('%.6e\t' % bf_value)
         bestfit_file.write('\n')
 
-    print 'File saved to: \n', fname
+    print( 'File saved to: \n', fname)
 
     return
 
@@ -107,12 +107,11 @@ def write_parameters_to_file(fname, best_fit_params, fit_statistics, param_value
             name = label +':'
             f.write(name.ljust(20, ' ')+'{0:.2f}_{{{1:.2f}}}^{{+{2:.2f}}}, {0:.2f}_{{{3:.2f}}}^{{+{4:.2f}}}, {0:.2f}_{{{5:.2f}}}^{{+{6:.2f}}} \n'.format(param_values_median[index, 0], param_values_median[index, 1], param_values_median[index, 4], param_values_median[index, 2], param_values_median[index, 5], param_values_median[index, 3], param_values_median[index, 6]))
 
-    print 'File saved to: \n', fname
+    print( 'File saved to: \n', fname)
 
     return
 
 def write_table(path_to_chain, model_name='bla', sampler='NS', threshold=0.3):
-
     if sampler == 'NS' or sampler == 'MN':
         fnames = [os.path.join(path_to_chain, 'chain_NS__accepted.txt')]
     elif sampler == 'MH':
@@ -122,7 +121,7 @@ def write_table(path_to_chain, model_name='bla', sampler='NS', threshold=0.3):
     elif sampler == 'PC':
         fnames = [os.path.join(path_to_chain, 'chain_PC__accepted.txt')]
     else:
-        print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).'
+        print( 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).')
 
     # deal with multiple chains from MH run and combine them into one (also taking care of burn-in)
     counter = 0
@@ -186,7 +185,7 @@ def write_table(path_to_chain, model_name='bla', sampler='NS', threshold=0.3):
         added_params += 1
     #exit()
 
-    for idx in xrange(2):
+    for idx in range(2):
 
         if 'Omega_m_{:} '.format(idx + 1) in names[:, 0] and 'sigma8_{:} '.format(idx + 1) in names[:, 0]:
             idx_Om = np.where('Omega_m_{:} '.format(idx + 1) == names[:, 0])[0]
@@ -230,9 +229,9 @@ def write_table(path_to_chain, model_name='bla', sampler='NS', threshold=0.3):
     #print best_fit_params, best_fit_params.shape
     #exit()
     fit_statistics = np.array([min_chi2, 0., 0., int(best_fit_index[0])])
-    print 'Calculating histograms with central value = MEAN.'
+    print( 'Calculating histograms with central value = MEAN.')
     params_mean, conf_mean = get_values_and_intervals(data[:, 2:].T, weights, labels, use_median=False)
-    print 'Calculating histograms with central value = MEDIAN.'
+    print( 'Calculating histograms with central value = MEDIAN.')
     params_median, conf_median = get_values_and_intervals(data[:, 2:].T, weights, labels, use_median=True)
 
     fname = os.path.join(path_to_chain, 'parameter_table.txt')

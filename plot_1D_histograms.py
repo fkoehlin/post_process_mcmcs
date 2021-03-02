@@ -50,7 +50,7 @@ def plot_histogram(path_in, path_out, key_params=[], plot_filetypes=['.pdf'], hi
     for filetype in plot_filetypes:
         fname = os.path.join(path_out, 'histograms_1D' + filetype)
         fig.savefig(fname)
-        print 'Plot saved to: \n', fname
+        print( 'Plot saved to: \n', fname)
 
     return
 

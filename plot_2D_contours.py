@@ -109,7 +109,7 @@ def make_2D_contour(path_out, paths_in=[], labels_ctr=[], colors=[], key_params=
     for filetype in plot_filetypes:
         fname = os.path.join(path_out, fname_suffix + '_' + key_params[0] + '_vs_' + key_params[1] + filetype)
         fig.savefig(fname)
-        print 'Plot saved to: \n', fname
+        print( 'Plot saved to: \n', fname)
 
     return
 
