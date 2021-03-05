@@ -152,7 +152,7 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
     # exact prior ranges (except for S8)
     plot_ranges = []
     labels = []
-    for idx in xrange(len(param_names)):
+    for idx in range(len(param_names)):
         plot_ranges += [(points_cosmo[:, idx].min(), points_cosmo[:, idx].max())]
         labels += [r'$' + labels_TeX[idx] + r'$']
 
@@ -228,7 +228,7 @@ def plot_triangle_1cosmo(path_in, path_out, fname_suffix='bla', levels=np.array(
 
     for filetype in plot_filetypes:
         plt.savefig(fname_out + filetype)
-        print 'Plot saved to: \n', fname_out + filetype
+        print( 'Plot saved to: \n', fname_out + filetype)
 
     return
 
@@ -250,7 +250,7 @@ def plot_triangles_2cosmos(path_in, path_out, fname_suffix='bla', levels=np.arra
     labels1 = []
     plot_ranges2 = []
     labels2 = []
-    for idx in xrange(len(param_names)):
+    for idx in range(len(param_names)):
         plot_ranges1 += [(min(points_cosmo1[:, idx].min(), points_cosmo2[:, idx].min()), max(points_cosmo1[:, idx].max(), points_cosmo2[:, idx].max()))]
         labels1 += [r'$' + labels_TeX[idx] + r'$']
 
@@ -287,7 +287,7 @@ def plot_triangles_2cosmos(path_in, path_out, fname_suffix='bla', levels=np.arra
 
     for filetype in plot_filetypes:
         fig1.savefig(fname_out1 + filetype)
-        print 'Plot saved to: \n', fname_out1 + filetype
+        print( 'Plot saved to: \n', fname_out1 + filetype)
 
     fig2 = corner.corner(points_diff, weights=weights, truths=np.zeros(len(labels1)), labels=labels2, smooth=smooth, range=plot_ranges2, plot_contours=True, hist_kwargs=hist_kwargs, levels=levels, plot_datapoints=False, plot_density=False, fill_contours=True, label_kwargs=label_kwargs)
     fig2.legend(frameon=False, bbox_transform=plt.gcf().transFigure, **legend_kwargs)
@@ -300,7 +300,7 @@ def plot_triangles_2cosmos(path_in, path_out, fname_suffix='bla', levels=np.arra
 
     for filetype in plot_filetypes:
         fig2.savefig(fname_out2 + filetype)
-        print 'Plot saved to: \n', fname_out2 + filetype
+        print( 'Plot saved to: \n', fname_out2 + filetype)
 
     return
 

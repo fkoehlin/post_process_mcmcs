@@ -35,7 +35,7 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
     elif sampler == 'PC':
         fnames = [os.path.join(path_to_chain, 'chain_PC__accepted.txt')]
     else:
-        print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).'
+        print( 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).')
 
     # deal with multiple chains from MH run and combine them into one (also taking care of burn-in)
     counter = 0
@@ -78,7 +78,7 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
         data = np.column_stack((data, S8))
         new_names.append(['S8', 'S_{8}'])
     except:
-        print 'Could not calculate and append S8. \n Are Omega_m and sigma8 in the chain?'
+        print( 'Could not calculate and append S8. \n Are Omega_m and sigma8 in the chain?')
     new_names = np.asarray(new_names, dtype=str)
     # better TeX:
     new_names[np.where(new_names[:, 0] == 'sigma8'), 1] = '\sigma_8'
@@ -116,9 +116,9 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
     #header =  header.tolist()
     fname = os.path.join(path_to_chain, model_name + '__HEADER.txt')
     np.savetxt(fname, data, header=header)
-    print 'Data saved to: \n', fname
+    print( 'Data saved to: \n', fname)
     if sampler == 'MH':
-        print 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100)
+        print( 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100))
 
     # for consistency with getdist:
     fname = os.path.join(path_to_chain, model_name + '__HEADER.paramnames')
@@ -145,11 +145,11 @@ def post_process_chain_1cosmo(path_to_chain, model_name, sampler='NS', threshold
     fname = os.path.join(path_to_chain, model_name + '.fits')
     if not os.path.isfile(fname):
         thdulist.writeto(fname)
-        print 'Data saved to: \n', fname
+        print( 'Data saved to: \n', fname)
         if sampler == 'MH':
-            print 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100)
+            print( 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100))
     else:
-        print 'FITS file already exists. Proceeding without overwriting it!'
+        print( 'FITS file already exists. Proceeding without overwriting it!')
 
     return
 
@@ -164,7 +164,7 @@ def post_process_chain_2cosmos(path_to_chain, model_name, sampler='NS', threshol
     elif sampler == 'PC':
         fname = os.path.join(path_to_chain, 'chain_PC__accepted.txt')
     else:
-        print 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).'
+        print( 'You must supply the type of sampler used for the MCMC (MH = Metropolis Hastings, MN = MultiNest, CH = CosmoHammer, PC = PolyChord).')
 
     data = np.loadtxt(fname)
 
@@ -196,7 +196,7 @@ def post_process_chain_2cosmos(path_to_chain, model_name, sampler='NS', threshol
         new_names.append(['S8_1', 'S_{8, \, 1}'])
         new_names.append(['S8_2', 'S_{8, \, 2}'])
     except:
-        print 'Could not calculate and append S8. \n Are Omega_m and sigma8 in the chain?'
+        print( 'Could not calculate and append S8. \n Are Omega_m and sigma8 in the chain?')
     new_names = np.asarray(new_names, dtype=str)
     #print new_names, new_names.shape
 
@@ -236,9 +236,9 @@ def post_process_chain_2cosmos(path_to_chain, model_name, sampler='NS', threshol
     #header =  header.tolist()
     fname = os.path.join(path_to_chain, model_name + '__HEADER.txt')
     np.savetxt(fname, data, header=header)
-    print 'Data saved to: \n', fname
+    print( 'Data saved to: \n', fname)
     if sampler == 'MH':
-        print 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100)
+        print( 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100))
 
     # for consistency with getdist:
     fname = os.path.join(path_to_chain, model_name + '__HEADER.paramnames')
@@ -265,11 +265,11 @@ def post_process_chain_2cosmos(path_to_chain, model_name, sampler='NS', threshol
 
     if not os.path.isfile(fname):
         thdulist.writeto(fname)
-        print 'Data saved to: \n', fname
+        print( 'Data saved to: \n', fname)
         if sampler == 'MH':
-            print 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100)
+            print( 'ATTENTION: the above file does not contain the first {:}% of entries from the original chain (burn-in).'.format(threshold * 100))
     else:
-        print 'FITS file already exists. Proceeding without overwriting it!'
+        print( 'FITS file already exists. Proceeding without overwriting it!')
 
     return
 

@@ -25,7 +25,7 @@ def minimum_credible_intervals(values, central_value, weights, bins=20):
     #bincenters = info.bincenters
     #levels = info.levels
 
-    histogram, bin_edges = np.histogram(values, bins=bins, weights=weights, normed=False, density=False)
+    histogram, bin_edges = np.histogram(values, bins=bins, weights=weights, density=False)
     bincenters = 0.5*(bin_edges[1:]+bin_edges[:-1])
 
     # Defining the sigma contours (1, 2 and 3-sigma)
